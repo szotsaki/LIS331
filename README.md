@@ -21,7 +21,7 @@ The code uses the I²C protocol to communicate with the sensor. If you attach th
 | CS         | 3V3              | Selects I²C protocol over SPI               |
 | VCC        | 3V3              |                                             |
 
-## Dependecies
+## Dependencies
 
 Install [I2C Master Library](http://dsscircuits.com/index.php/articles/66-arduino-i2c-master-library). It's more robust and customisable than the built-in Wire.h library.
 
