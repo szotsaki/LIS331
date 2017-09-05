@@ -72,7 +72,7 @@ uint8_t LIS331::getAxisValue(const byte addressLow, const byte addressHigh, int1
         return err;
     }
 
-    ret = (low | (high << 8));
+    ret = ((high << 8) | low) / 16;
 
     return E_OK;
 }
