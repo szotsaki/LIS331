@@ -24,6 +24,7 @@
 #define E_OK               0x0
 #define E_WRONG_INTERRUPT  0x75
 #define E_NUM_TOO_BIG      0x76
+#define E_WRONG_SCALE      0x77
 
 // Register addresses
 #define LIS_CTRL_REG1       0x20
@@ -112,8 +113,13 @@
 
 class LIS331
 {
+public:
+    enum Scale : byte;
+
+private:
     const uint8_t i2cAddress;
     byte interruptSource;
+    Scale currentScale;
 
     uint8_t readReg(const byte addr, byte &val);
     uint8_t writeReg(const byte addr, const byte val);
@@ -233,6 +239,15 @@ public:
     }
 
     // X, Y, Z axes
+    /**
+     * @brief getAxisValuesG
+     * @param x
+     * @param y
+     * @param z
+     * @return The acceleration in [g] for all three axes
+     */
+    uint8_t getAxisValuesG(float &x, float &y, float &z);
+
     inline uint8_t getXValue(int16_t &ret) {
         return getAxisValue(LIS_OUT_X_L, LIS_OUT_X_H, ret);
     }

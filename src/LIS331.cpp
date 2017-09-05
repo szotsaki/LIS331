@@ -18,7 +18,8 @@
 
 LIS331::LIS331(const uint8_t i2cAddress)
     : i2cAddress(i2cAddress),
-      interruptSource(0)
+      interruptSource(0),
+      currentScale(Scale::scale6g)
 {
 
 }
@@ -139,6 +140,47 @@ uint8_t LIS331::setDataRate(const DataRate dataRate)
     bitWrite(ctrlReg1, LIS_CTRL_REG1_DR1, bitRead(dataRate, LIS_CTRL_REG1_DR1));
 
     return writeReg(LIS_CTRL_REG1, ctrlReg1);
+}
+
+uint8_t LIS331::getAxisValuesG(float &x, float &y, float &z)
+{
+    int16_t x_ = 0, y_ = 0, z_ = 0;
+
+    uint8_t err = getXValue(x_);
+    if (err != E_OK) {
+        return err;
+    }
+
+    err = getYValue(y_);
+    if (err != E_OK) {
+        return err;
+    }
+
+    err = getZValue(z_);
+    if (err != E_OK) {
+        return err;
+    }
+
+    float scale = 0.0f;
+    switch (currentScale) {
+    case Scale::scale6g:
+        scale = (6 * 2) / 4096.0f;
+        break;
+    case Scale::scale12g:
+        scale = (12 * 2) / 4096.0f;
+        break;
+    case Scale::scale24g:
+        scale = (24 * 2) / 4096.0f;
+        break;
+    default:
+        return E_WRONG_SCALE;
+    }
+
+    x = x_ * scale;
+    y = y_ * scale;
+    z = z_ * scale;
+
+    return E_OK;
 }
 
 uint8_t LIS331::getHighPassFilterMode(HighPassFilter &ret)
@@ -296,13 +338,15 @@ uint8_t LIS331::getScale(Scale &ret)
     bitWrite(scale, LIS_CTRL_REG4_FS1, bitRead(ctrlReg4, LIS_CTRL_REG4_FS1));
 
     ret = Scale(scale);
+    currentScale = ret;
+
     return E_OK;
 }
 
 uint8_t LIS331::setScale(const LIS331::Scale scale)
 {
     byte ctrlReg4 = 0;
-    const uint8_t err = readReg(LIS_CTRL_REG4, ctrlReg4);
+    uint8_t err = readReg(LIS_CTRL_REG4, ctrlReg4);
     if (err != E_OK) {
         return err;
     }
@@ -310,7 +354,12 @@ uint8_t LIS331::setScale(const LIS331::Scale scale)
     bitWrite(ctrlReg4, LIS_CTRL_REG4_FS0, bitRead(scale, LIS_CTRL_REG4_FS0));
     bitWrite(ctrlReg4, LIS_CTRL_REG4_FS1, bitRead(scale, LIS_CTRL_REG4_FS1));
 
-    return writeReg(LIS_CTRL_REG4, ctrlReg4);
+    err = writeReg(LIS_CTRL_REG4, ctrlReg4);
+    if (err == E_OK) {
+        currentScale = scale;
+    }
+
+    return err;
 }
 
 uint8_t LIS331::isSleepToWakeEnabled(bool &ret)
