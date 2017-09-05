@@ -199,7 +199,7 @@ uint8_t LIS331::getHighPassFilterMode(HighPassFilter &ret)
     return E_OK;
 }
 
-uint8_t LIS331::setHighPassFilterMode(const LIS331::HighPassFilter mode)
+uint8_t LIS331::setHighPassFilterMode(const HighPassFilter mode)
 {
     byte ctrlReg2 = 0;
     const uint8_t err = readReg(LIS_CTRL_REG2, ctrlReg2);
@@ -229,7 +229,7 @@ uint8_t LIS331::getHighPassCutOff(HighPassCutOff &ret)
     return E_OK;
 }
 
-uint8_t LIS331::setHighPassCutOff(const LIS331::HighPassCutOff mode)
+uint8_t LIS331::setHighPassCutOff(const HighPassCutOff mode)
 {
     byte ctrlReg2 = 0;
     const uint8_t err = readReg(LIS_CTRL_REG2, ctrlReg2);
@@ -297,7 +297,7 @@ uint8_t LIS331::getInt2DataSignal(Int2DataSignal &ret)
     return E_OK;
 }
 
-uint8_t LIS331::setDataSignal(const LIS331::Int1DataSignal signal)
+uint8_t LIS331::setDataSignal(const Int1DataSignal signal)
 {
     byte ctrlReg3 = 0;
     const uint8_t err = readReg(LIS_CTRL_REG3, ctrlReg3);
@@ -311,7 +311,7 @@ uint8_t LIS331::setDataSignal(const LIS331::Int1DataSignal signal)
     return writeReg(LIS_CTRL_REG3, ctrlReg3);
 }
 
-uint8_t LIS331::setDataSignal(const LIS331::Int2DataSignal signal)
+uint8_t LIS331::setDataSignal(const Int2DataSignal signal)
 {
     byte ctrlReg3 = 0;
     const uint8_t err = readReg(LIS_CTRL_REG3, ctrlReg3);
@@ -343,7 +343,7 @@ uint8_t LIS331::getScale(Scale &ret)
     return E_OK;
 }
 
-uint8_t LIS331::setScale(const LIS331::Scale scale)
+uint8_t LIS331::setScale(const Scale scale)
 {
     byte ctrlReg4 = 0;
     uint8_t err = readReg(LIS_CTRL_REG4, ctrlReg4);
@@ -416,7 +416,7 @@ uint8_t LIS331::getInterruptSource(const byte interrupt, IntSource &ret)
     return E_OK;
 }
 
-uint8_t LIS331::setInterruptSource(const byte interrupt, LIS331::IntSource source)
+uint8_t LIS331::setInterruptSource(const byte interrupt, IntSource source)
 
 {
     byte intRegAddr = 0;
@@ -443,7 +443,7 @@ uint8_t LIS331::setInterruptSource(const byte interrupt, LIS331::IntSource sourc
     return writeReg(intRegAddr, intRegVal);
 }
 
-uint8_t LIS331::isInterruptEnabled(const byte interrupt, const LIS331::Axis axis, const bool highEvent, bool &ret)
+uint8_t LIS331::isInterruptEnabled(const byte interrupt, const Axis axis, const bool highEvent, bool &ret)
 {
     byte intCfgAddr = 0;
     switch (interrupt) { // TODO: Simplify with C++17 Structured Bindings
@@ -470,7 +470,7 @@ uint8_t LIS331::isInterruptEnabled(const byte interrupt, const LIS331::Axis axis
     return readRegisterBit(intCfgAddr, bit, ret);
 }
 
-uint8_t LIS331::setInterruptEnabled(const byte interrupt, const LIS331::Axis axis, const bool highEvent, const bool enabled)
+uint8_t LIS331::setInterruptEnabled(const byte interrupt, const Axis axis, const bool highEvent, const bool enabled)
 {
     byte intCfgAddr = 0;
     switch (interrupt) { // TODO: Simplify with C++17 Structured Bindings
@@ -522,7 +522,7 @@ uint8_t LIS331::readInterrupt(const byte interrupt)
     return E_OK;
 }
 
-uint8_t LIS331::getInterruptValue(const LIS331::Axis axis, const bool highEvent, bool &ret)
+uint8_t LIS331::getInterruptValue(const Axis axis, const bool highEvent, bool &ret)
 {
     byte bit = 0;
     bit += axis;  // set X, Y or Z
