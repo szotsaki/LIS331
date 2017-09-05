@@ -1,4 +1,5 @@
 LIS331	KEYWORD1
+getAxisValuesG	KEYWORD2
 getDataRate	KEYWORD2
 getHPReference	KEYWORD2
 getHighPassCutOff	KEYWORD2
@@ -13,7 +14,7 @@ getPPOD	KEYWORD2
 getPowerMode	KEYWORD2
 getRebootMemoryContent	KEYWORD2
 getScale	KEYWORD2
-getStSign	KEYWORD2
+getSelfTestSign	KEYWORD2
 getXValue	KEYWORD2
 getYValue	KEYWORD2
 getZValue	KEYWORD2
@@ -60,8 +61,8 @@ setPowerMode	KEYWORD2
 setRebootMemoryContent	KEYWORD2
 setScale	KEYWORD2
 setSelfTestEnabled	KEYWORD2
+setSelfTestSign	KEYWORD2
 setSleepToWakeEnabled	KEYWORD2
-setStSign	KEYWORD2
 setXEnabled	KEYWORD2
 setYEnabled	KEYWORD2
 setZEnabled	KEYWORD2
