@@ -57,7 +57,7 @@ uint8_t LIS331::writeRegisterBit(const byte registerAddr, const byte bit, const 
     return writeReg(registerAddr, registerValue);
 }
 
-uint8_t LIS331::getAxisValue(const byte addressLow, const byte addressHigh, uint16_t &ret)
+uint8_t LIS331::getAxisValue(const byte addressLow, const byte addressHigh, int16_t &ret)
 {
     byte low = 0;
     byte high = 0;

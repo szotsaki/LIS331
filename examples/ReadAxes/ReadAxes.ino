@@ -84,7 +84,7 @@ void setup()
 
 void loop()
 {
-    uint16_t x = 0, y = 0, z = 0;
+    int16_t x = 0, y = 0, z = 0;
     accelerometer.getXValue(x);
     accelerometer.getYValue(y);
     accelerometer.getZValue(z);

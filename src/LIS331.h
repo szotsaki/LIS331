@@ -121,7 +121,7 @@ class LIS331
     uint8_t readRegisterBit(const byte registerAddr, const byte bit, bool &ret);
     uint8_t writeRegisterBit(const byte registerAddr, const byte bit, const bool enabled);
 
-    uint8_t getAxisValue(const byte addressLow, const byte addressHigh, uint16_t &ret);
+    uint8_t getAxisValue(const byte addressLow, const byte addressHigh, int16_t &ret);
 
     uint8_t getInterruptThresholdAndDuration(const byte address, byte &ret);
     uint8_t setInterruptThresholdAndDuration(const byte address, const byte value);
@@ -233,15 +233,15 @@ public:
     }
 
     // X, Y, Z axes
-    inline uint8_t getXValue(uint16_t &ret) {
+    inline uint8_t getXValue(int16_t &ret) {
         return getAxisValue(LIS_OUT_X_L, LIS_OUT_X_H, ret);
     }
 
-    inline uint8_t getYValue(uint16_t &ret) {
+    inline uint8_t getYValue(int16_t &ret) {
         return getAxisValue(LIS_OUT_Y_L, LIS_OUT_X_H, ret);
     }
 
-    inline uint8_t getZValue(uint16_t &ret) {
+    inline uint8_t getZValue(int16_t &ret) {
         return getAxisValue(LIS_OUT_Z_L, LIS_OUT_Z_H, ret);
     }
 
