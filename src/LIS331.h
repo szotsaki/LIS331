@@ -472,21 +472,21 @@ public:
     uint8_t setScale(const Scale scale);
 
     /**
-     * @brief getStSign Self-test sign. Default value: 0
+     * @brief getSelfTestSign Self-test sign. Default value: 0
      * @return true:  self-test minus
      *         false: self-test plus
      */
-    inline uint8_t getStSign(bool &ret) {
+    inline uint8_t getSelfTestSign(bool &ret) {
         return readRegisterBit(LIS_CTRL_REG4, LIS_CTRL_REG4_STSIGN, ret);
     }
 
     /**
-     * @brief setStSign Self-test sign. Default value: 0
+     * @brief setSelfTestSign Self-test sign. Default value: 0
      * @param sign true:  self-test minus
      *             false: self-test plus
      * @return
      */
-    inline uint8_t setStSign(const bool sign) {
+    inline uint8_t setSelfTestSign(const bool sign) {
         return writeRegisterBit(LIS_CTRL_REG4, LIS_CTRL_REG4_STSIGN, sign);
     }
 
