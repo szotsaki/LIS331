@@ -243,7 +243,7 @@ uint8_t LIS331::setHighPassCutOff(const HighPassCutOff mode)
     return writeReg(LIS_CTRL_REG2, ctrlReg2);
 }
 
-uint8_t LIS331::isLatchedInterrupt(const byte interrupt, bool &ret)
+uint8_t LIS331::isInterruptLatched(const byte interrupt, bool &ret)
 {
     if (interrupt == 1) {
         return readRegisterBit(LIS_CTRL_REG3, LIS_CTRL_REG3_LIR1, ret);
@@ -254,12 +254,12 @@ uint8_t LIS331::isLatchedInterrupt(const byte interrupt, bool &ret)
     return E_WRONG_INTERRUPT;
 }
 
-uint8_t LIS331::setLatchedInterrupt(const byte interrupt, const bool value)
+uint8_t LIS331::setInterruptLatched(const byte interrupt, const bool latched)
 {
     if (interrupt == 1) {
-        return writeRegisterBit(LIS_CTRL_REG3, LIS_CTRL_REG3_LIR1, value);
+        return writeRegisterBit(LIS_CTRL_REG3, LIS_CTRL_REG3_LIR1, latched);
     } else if (interrupt == 2) {
-        return writeRegisterBit(LIS_CTRL_REG3, LIS_CTRL_REG3_LIR2, value);
+        return writeRegisterBit(LIS_CTRL_REG3, LIS_CTRL_REG3_LIR2, latched);
     }
 
     return E_WRONG_INTERRUPT;

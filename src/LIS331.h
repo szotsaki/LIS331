@@ -425,24 +425,24 @@ public:
     }
 
     /**
-      * @brief Latch interrupt request. The register is cleared by calling readInterrupt().
+      * @brief isInterruptLatched The interrupt register is cleared by calling readInterrupt().
       *        Default value: false
       * @param interrupt 1 or 2 depending on pin assignment
       * @return false: interrupt request not latched
       *          true: interrupt request latched
       */
-    uint8_t isLatchedInterrupt(const byte interrupt, bool &ret);
+    uint8_t isInterruptLatched(const byte interrupt, bool &ret);
 
     /**
-      * @brief setLIR Latch interrupt request. The register is cleared by calling readInterrupt()
+      * @brief setInterruptLatched Latch interrupt request. The register is cleared by calling readInterrupt()
       * @param interrupt 1 or 2 depending on pin assignment
       * @param value false: interrupt request not latched
       *               true: interrupt request latched
       * @return
       */
-    uint8_t setLatchedInterrupt(const byte interrupt, const bool value);
+    uint8_t setInterruptLatched(const byte interrupt, const bool latched);
 
-    uint8_t getInt1DataSignal(Int1DataSignal &ret); // TODO: Refaktorálás egy függvénybe
+    uint8_t getInt1DataSignal(Int1DataSignal &ret);
     uint8_t getInt2DataSignal(Int2DataSignal &ret);
 
     uint8_t setDataSignal(const Int1DataSignal signal);
@@ -555,7 +555,7 @@ public:
     /**
       * Reading at this address clears isInterruptGenerated() bit (and the interrupt signal on the pin) and
       * allows the refreshment of data in the interrupt source register if the latched option was chosen
-      * with setLIR().
+      * with setInterruptLatched().
       *
       * This function reads the entire register into a temporal variable, thus:
       *   - it's possible to gather information based on one consistent state with the isInterruptGenerated()
