@@ -388,7 +388,7 @@ public:
     // Control register 3
     /**
       * @brief isInterruptActiveHL
-      * @return false: active high
+      * @return false: active high (default)
       *          true: active low
       */
     inline uint8_t isInterruptActiveHL(bool &ret) {
@@ -548,7 +548,26 @@ public:
     uint8_t getInterruptSource(const byte interrupt, IntSource &ret);
     uint8_t setInterruptSource(const byte interrupt, IntSource source);
 
+    /**
+     * @see setInterruptEnabled()
+     * @brief isInterruptEnabled
+     * @param interrupt
+     * @param axis
+     * @param highEvent
+     * @param ret
+     * @return
+     */
     uint8_t isInterruptEnabled(const byte interrupt, const Axis axis, const bool highEvent, bool &ret);
+
+    /**
+     * @brief setInterruptEnabled
+     * @param interrupt 1 or 2
+     * @param axis
+     * @param highEvent True to enable interrupt request on measured acceleration value higher than preset threshold
+     *                  (otherwise lower)
+     * @param enabled
+     * @return
+     */
     uint8_t setInterruptEnabled(const byte interrupt, const Axis axis, const bool highEvent, const bool enabled);
 
     // Interrupt source register
@@ -575,11 +594,40 @@ public:
     uint8_t getInterruptValue(const Axis axis, const bool highEvent, bool &ret);
 
     // Interrupt threshold register
+    /**
+     * @see setInterruptThreshold()
+     * @brief getInterruptThreshold
+     * @param interrupt
+     * @param ret
+     * @return
+     */
     uint8_t getInterruptThreshold(const byte interrupt, byte &ret);
+
+    /**
+     * @brief setInterruptThreshold
+     * @param interrupt
+     * @param threshold Must be between 0..127
+     * @return
+     */
     uint8_t setInterruptThreshold(const byte interrupt, const byte threshold);
 
     // Interrupt duration register
+    /**
+     * @see setInterruptDuration()
+     * @brief getInterruptDuration
+     * @param interrupt
+     * @param ret
+     * @return
+     */
     uint8_t getInterruptDuration(const byte interrupt, byte &ret);
+
+    /**
+     * @brief setInterruptDuration Sets the minimum duration of the interrupt event to be recognized
+     * @param interrupt
+     * @param duration Must be between 0..127. Duration time steps and maximum values depend on the
+     *        DataRate chosen.
+     * @return
+     */
     uint8_t setInterruptDuration(const byte interrupt, const byte duration);
 };
 
