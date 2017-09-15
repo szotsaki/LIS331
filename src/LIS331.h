@@ -111,7 +111,7 @@
 #define LIS_INT_CFG_AOI      7
 #define LIS_INT_CFG_6D       6
 
-#define LIS_INT_SRC_IA       7
+#define LIS_INT_SRC_IA       6
 
 class LIS331
 {
