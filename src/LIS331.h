@@ -611,6 +611,26 @@ public:
      */
     uint8_t setInterruptThreshold(const byte interrupt, const byte threshold);
 
+    /**
+     * @see setInterruptThresholdG()
+     * @brief getInterruptThresholdG
+     * @param interrupt
+     * @param ret
+     * @return
+     */
+    uint8_t getInterruptThresholdG(const byte interrupt, float &ret);
+
+    /**
+     * @brief setInterruptThresholdG Use [g] values to set an interrupt threshold instead of raw values.
+     *        Since the resolution is not infinite, it may not be set to exact value. If it is the case,
+     *        the raw value will be rounded down to the nearest acceptable. It is worth running
+     *        getInterruptThresholdG() to obtain the programmed value (or calculate it manually).
+     * @param interrupt 1 or 2
+     * @param threshold Must be smaller or equal than the configured scale (6g, 12g, or 24g)
+     * @return
+     */
+    uint8_t setInterruptThresholdG(const byte interrupt, const float threshold);
+
     // Interrupt duration register
     /**
      * @see setInterruptDuration()

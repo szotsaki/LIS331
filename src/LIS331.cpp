@@ -566,6 +566,63 @@ uint8_t LIS331::setInterruptThreshold(const byte interrupt, const byte threshold
     return setInterruptThresholdAndDuration(intThsAddr, threshold);
 }
 
+uint8_t LIS331::getInterruptThresholdG(const byte interrupt, float &ret)
+{
+    float scale = 0.0f;
+    switch (currentScale) {
+    case Scale::scale6g:
+        scale = 6 / 127.0f;
+        break;
+    case Scale::scale12g:
+        scale = 12 / 127.0f;
+        break;
+    case Scale::scale24g:
+        scale = 24 / 127.0f;
+        break;
+    default:
+        return E_WRONG_SCALE;
+    }
+
+    byte rawThreshold = 0;
+    const uint8_t err = getInterruptThreshold(interrupt, rawThreshold);
+    if (err != E_OK) {
+        return err;
+    }
+
+    ret = rawThreshold * scale;
+    return E_OK;
+}
+
+uint8_t LIS331::setInterruptThresholdG(const byte interrupt, const float threshold)
+{
+    float scale = 0.0f;
+    switch (currentScale) {
+    case Scale::scale6g:
+        if (threshold > 6) {
+            return E_NUM_TOO_BIG;
+        }
+        scale = 6 / 127.0f;
+        break;
+    case Scale::scale12g:
+        if (threshold > 12) {
+            return E_NUM_TOO_BIG;
+        }
+        scale = 12 / 127.0f;
+        break;
+    case Scale::scale24g:
+        if (threshold > 24) {
+            return E_NUM_TOO_BIG;
+        }
+        scale = 24 / 127.0f;
+        break;
+    default:
+        return E_WRONG_SCALE;
+    }
+
+    const byte rawValue = static_cast<const byte>(threshold / scale); // round: floor
+    return setInterruptThreshold(interrupt, rawValue);
+}
+
 uint8_t LIS331::getInterruptDuration(const byte interrupt, byte &ret)
 {
     byte intDurAddr = 0;
