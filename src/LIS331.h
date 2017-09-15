@@ -17,6 +17,8 @@
 #ifndef LIS331_H
 #define LIS331_H
 
+#include <limits.h>
+
 #include "Arduino.h"
 #include <I2C.h>
 

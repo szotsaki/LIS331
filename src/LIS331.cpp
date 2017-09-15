@@ -664,13 +664,13 @@ uint8_t LIS331::getInterruptThresholdAndDuration(const byte address, byte &ret)
         return err;
     }
 
-    bitClear(ret, sizeof (byte) - 1);
+    bitClear(ret, CHAR_BIT - 1);
     return E_OK;
 }
 
 uint8_t LIS331::setInterruptThresholdAndDuration(const byte address, const byte value)
 {
-    if (bitRead(value, sizeof (byte) - 1) == 1) {
+    if (bitRead(value, CHAR_BIT - 1) == 1) {
         return E_NUM_TOO_BIG;
     }
 
