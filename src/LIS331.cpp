@@ -515,7 +515,7 @@ uint8_t LIS331::readInterrupt(const byte interrupt)
     byte intSrcVal = 0;
     const uint8_t err = readReg(intSrcAddr, intSrcVal);
     if (err != E_OK) {
-        return E_WRONG_INTERRUPT;
+        return err;
     }
 
     interruptSource = intSrcVal;
