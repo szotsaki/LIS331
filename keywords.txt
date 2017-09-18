@@ -9,6 +9,7 @@ getInt2DataSignal	KEYWORD2
 getInterruptDuration	KEYWORD2
 getInterruptSource	KEYWORD2
 getInterruptThreshold	KEYWORD2
+getInterruptThresholdG	KEYWORD2
 getInterruptValue	KEYWORD2
 getPPOD	KEYWORD2
 getPowerMode	KEYWORD2
@@ -27,7 +28,7 @@ isHPenabledForInterrupt2	KEYWORD2
 isInterruptActiveHL	KEYWORD2
 isInterruptEnabled	KEYWORD2
 isInterruptGenerated	KEYWORD2
-isLatchedInterrupt	KEYWORD2
+isInterruptLatched	KEYWORD2
 isSelfTestEnabled	KEYWORD2
 isSleepToWakeEnabled	KEYWORD2
 isXDataAvailable	KEYWORD2
@@ -53,9 +54,10 @@ setHighPassFilterMode	KEYWORD2
 setInterruptActiveHL	KEYWORD2
 setInterruptDuration	KEYWORD2
 setInterruptEnabled	KEYWORD2
+setInterruptLatched	KEYWORD2
 setInterruptSource	KEYWORD2
 setInterruptThreshold	KEYWORD2
-setLatchedInterrupt	KEYWORD2
+setInterruptThresholdG	KEYWORD2
 setPPOD	KEYWORD2
 setPowerMode	KEYWORD2
 setRebootMemoryContent	KEYWORD2
