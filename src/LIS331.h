@@ -399,8 +399,8 @@ public:
 
     /**
       * @brief setInterruptActiveHL
-      * @param active false: active high
-      *                true: active low
+      * @param active false: active high (the level on interrupt pin is low and goes high when the interrupt occurs)
+      *                true: active low (the level on interrupt pin is high and goes low when the interrupt occurs)
       * @return
       */
     inline uint8_t setInterruptActiveHL(bool low) {
@@ -565,8 +565,8 @@ public:
      * @brief setInterruptEnabled
      * @param interrupt 1 or 2
      * @param axis
-     * @param highEvent True to enable interrupt request on measured acceleration value higher than preset threshold
-     *                  (otherwise lower)
+     * @param highEvent True to enable interrupt request on measured acceleration value higher than
+     *                  preset threshold.
      * @param enabled
      * @return
      */
