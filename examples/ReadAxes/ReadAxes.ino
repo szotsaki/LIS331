@@ -50,6 +50,9 @@ void print_err(byte err_code)
     case E_NUM_TOO_BIG:
         Serial.println(F("E_NUM_TOO_BIG"));
         break;
+    case E_WRONG_SCALE:
+        Serial.println(F("E_WRONG_SCALE"));
+        break;
     default:
         Serial.print(F("Unknown error message: 0x"));
         Serial.println(err_code, HEX);
