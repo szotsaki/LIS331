@@ -255,7 +255,7 @@ public:
     }
 
     inline uint8_t getYValue(int16_t &ret) {
-        return getAxisValue(LIS_OUT_Y_L, LIS_OUT_X_H, ret);
+        return getAxisValue(LIS_OUT_Y_L, LIS_OUT_Y_H, ret);
     }
 
     inline uint8_t getZValue(int16_t &ret) {
