@@ -23,7 +23,9 @@
 #include <I2C.h>
 
 // More error codes besides the ones in I2C.h
-#define E_OK               0x0
+#ifndef E_OK
+  #define E_OK             0x0
+#endif // E_OK
 #define E_WRONG_INTERRUPT  0x75
 #define E_NUM_TOO_BIG      0x76
 #define E_WRONG_SCALE      0x77
