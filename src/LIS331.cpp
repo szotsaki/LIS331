@@ -458,7 +458,7 @@ uint8_t LIS331::isInterruptEnabled(const byte interrupt, const Axis axis, const 
     }
 
     byte bit = 0;
-    bit += axis;  // set X, Y or Z
+    bit += 2 * axis;  // set X, Y or Z
     bit += highEvent; // set high or low
 
     byte intCfgVal = 0;
@@ -485,7 +485,7 @@ uint8_t LIS331::setInterruptEnabled(const byte interrupt, const Axis axis, const
     }
 
     byte bit = 0;
-    bit += axis;  // set X, Y or Z
+    bit += 2 * axis;  // set X, Y or Z
     bit += highEvent; // set high or low
 
     byte intCfgVal = 0;
@@ -525,7 +525,7 @@ uint8_t LIS331::readInterrupt(const byte interrupt)
 uint8_t LIS331::getInterruptValue(const Axis axis, const bool highEvent, bool &ret)
 {
     byte bit = 0;
-    bit += axis;  // set X, Y or Z
+    bit += 2 * axis;  // set X, Y or Z
     bit += highEvent; // set high or low
 
     ret = bitRead(interruptSource, bit);
