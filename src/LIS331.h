@@ -385,7 +385,7 @@ public:
       * @param reference
       * @return
       */
-    uint8_t setHPReference(const byte reference) {
+    inline uint8_t setHPReference(const byte reference) {
         return writeReg(LIS_REFERENCE, reference);
     }
 
