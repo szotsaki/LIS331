@@ -582,7 +582,7 @@ public:
       *
       * This function reads the entire register into a temporal variable, thus:
       *   - it's possible to gather information based on one consistent state with the isInterruptGenerated()
-      *     and getInterruptValue() functions;
+      *     and getInterruptSource() functions;
       *   - it's necessary to call this function before you call any of the two aforementioned functions.
       * @brief readInterrupt
       * @param interrupt
@@ -595,7 +595,14 @@ public:
         return E_OK;
     }
 
-    uint8_t getInterruptValue(const Axis axis, const bool highEvent, bool &ret);
+    /**
+     * @brief getInterruptSource Returns whether the requested event occurred
+     * @param axis If the event occurred because of this axis
+     * @param highEvent If the event occurred because of a high event (see setInterruptEnabled() documentation)
+     * @param ret Whether the specified interrupt occurred because of that axis and because of highEvent
+     * @return
+     */
+    uint8_t getInterruptSource(const Axis axis, const bool highEvent, bool &ret);
 
     // Interrupt threshold register
     /**

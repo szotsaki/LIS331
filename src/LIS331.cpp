@@ -522,7 +522,7 @@ uint8_t LIS331::readInterrupt(const byte interrupt)
     return E_OK;
 }
 
-uint8_t LIS331::getInterruptValue(const Axis axis, const bool highEvent, bool &ret)
+uint8_t LIS331::getInterruptSource(const Axis axis, const bool highEvent, bool &ret)
 {
     byte bit = 0;
     bit += 2 * axis;  // set X, Y or Z
