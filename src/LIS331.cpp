@@ -49,9 +49,9 @@ uint8_t LIS331::setPowerMode(const PowerMode mode)
         return err;
     }
 
-    bitWrite(ctrlReg1, LIS_CTRL_REG1_PM0, bitRead(mode, LIS_CTRL_REG1_PM0));
-    bitWrite(ctrlReg1, LIS_CTRL_REG1_PM1, bitRead(mode, LIS_CTRL_REG1_PM1));
-    bitWrite(ctrlReg1, LIS_CTRL_REG1_PM2, bitRead(mode, LIS_CTRL_REG1_PM2));
+    bitWrite(ctrlReg1, LIS_CTRL_REG1_PM0, bitRead(static_cast<uint8_t>(mode), LIS_CTRL_REG1_PM0));
+    bitWrite(ctrlReg1, LIS_CTRL_REG1_PM1, bitRead(static_cast<uint8_t>(mode), LIS_CTRL_REG1_PM1));
+    bitWrite(ctrlReg1, LIS_CTRL_REG1_PM2, bitRead(static_cast<uint8_t>(mode), LIS_CTRL_REG1_PM2));
 
     return writeReg(LIS_CTRL_REG1, ctrlReg1);
 }
@@ -80,8 +80,8 @@ uint8_t LIS331::setDataRate(const DataRate dataRate)
         return err;
     }
 
-    bitWrite(ctrlReg1, LIS_CTRL_REG1_DR0, bitRead(dataRate, LIS_CTRL_REG1_DR0));
-    bitWrite(ctrlReg1, LIS_CTRL_REG1_DR1, bitRead(dataRate, LIS_CTRL_REG1_DR1));
+    bitWrite(ctrlReg1, LIS_CTRL_REG1_DR0, bitRead(static_cast<uint8_t>(dataRate), LIS_CTRL_REG1_DR0));
+    bitWrite(ctrlReg1, LIS_CTRL_REG1_DR1, bitRead(static_cast<uint8_t>(dataRate), LIS_CTRL_REG1_DR1));
 
     return writeReg(LIS_CTRL_REG1, ctrlReg1);
 }
@@ -151,8 +151,8 @@ uint8_t LIS331::setHighPassFilterMode(const HighPassFilter mode)
         return err;
     }
 
-    bitWrite(ctrlReg2, LIS_CTRL_REG2_HPM0, bitRead(mode, LIS_CTRL_REG2_HPM0));
-    bitWrite(ctrlReg2, LIS_CTRL_REG2_HPM1, bitRead(mode, LIS_CTRL_REG2_HPM1));
+    bitWrite(ctrlReg2, LIS_CTRL_REG2_HPM0, bitRead(static_cast<uint8_t>(mode), LIS_CTRL_REG2_HPM0));
+    bitWrite(ctrlReg2, LIS_CTRL_REG2_HPM1, bitRead(static_cast<uint8_t>(mode), LIS_CTRL_REG2_HPM1));
 
     return writeReg(LIS_CTRL_REG2, ctrlReg2);
 }
@@ -181,8 +181,8 @@ uint8_t LIS331::setHighPassCutOff(const HighPassCutOff mode)
         return err;
     }
 
-    bitWrite(ctrlReg2, LIS_CTRL_REG2_HPCF0, bitRead(mode, LIS_CTRL_REG2_HPCF0));
-    bitWrite(ctrlReg2, LIS_CTRL_REG2_HPCF1, bitRead(mode, LIS_CTRL_REG2_HPCF1));
+    bitWrite(ctrlReg2, LIS_CTRL_REG2_HPCF0, bitRead(static_cast<uint8_t>(mode), LIS_CTRL_REG2_HPCF0));
+    bitWrite(ctrlReg2, LIS_CTRL_REG2_HPCF1, bitRead(static_cast<uint8_t>(mode), LIS_CTRL_REG2_HPCF1));
 
     return writeReg(LIS_CTRL_REG2, ctrlReg2);
 }
@@ -249,8 +249,8 @@ uint8_t LIS331::setDataSignal(const Int1DataSignal signal)
         return err;
     }
 
-    bitWrite(ctrlReg3, LIS_CTRL_REG3_I1_CFG0, bitRead(signal, LIS_CTRL_REG3_I1_CFG0));
-    bitWrite(ctrlReg3, LIS_CTRL_REG3_I1_CFG1, bitRead(signal, LIS_CTRL_REG3_I1_CFG1));
+    bitWrite(ctrlReg3, LIS_CTRL_REG3_I1_CFG0, bitRead(static_cast<uint8_t>(signal), LIS_CTRL_REG3_I1_CFG0));
+    bitWrite(ctrlReg3, LIS_CTRL_REG3_I1_CFG1, bitRead(static_cast<uint8_t>(signal), LIS_CTRL_REG3_I1_CFG1));
 
     return writeReg(LIS_CTRL_REG3, ctrlReg3);
 }
@@ -263,8 +263,8 @@ uint8_t LIS331::setDataSignal(const Int2DataSignal signal)
         return err;
     }
 
-    bitWrite(ctrlReg3, LIS_CTRL_REG3_I2_CFG0, bitRead(signal, LIS_CTRL_REG3_I2_CFG0));
-    bitWrite(ctrlReg3, LIS_CTRL_REG3_I2_CFG1, bitRead(signal, LIS_CTRL_REG3_I2_CFG1));
+    bitWrite(ctrlReg3, LIS_CTRL_REG3_I2_CFG0, bitRead(static_cast<uint8_t>(signal), LIS_CTRL_REG3_I2_CFG0));
+    bitWrite(ctrlReg3, LIS_CTRL_REG3_I2_CFG1, bitRead(static_cast<uint8_t>(signal), LIS_CTRL_REG3_I2_CFG1));
 
     return writeReg(LIS_CTRL_REG3, ctrlReg3);
 }
@@ -295,8 +295,8 @@ uint8_t LIS331::setScale(const Scale scale)
         return err;
     }
 
-    bitWrite(ctrlReg4, LIS_CTRL_REG4_FS0, bitRead(scale, LIS_CTRL_REG4_FS0));
-    bitWrite(ctrlReg4, LIS_CTRL_REG4_FS1, bitRead(scale, LIS_CTRL_REG4_FS1));
+    bitWrite(ctrlReg4, LIS_CTRL_REG4_FS0, bitRead(static_cast<uint8_t>(scale), LIS_CTRL_REG4_FS0));
+    bitWrite(ctrlReg4, LIS_CTRL_REG4_FS1, bitRead(static_cast<uint8_t>(scale), LIS_CTRL_REG4_FS1));
 
     err = writeReg(LIS_CTRL_REG4, ctrlReg4);
     if (err == E_OK) {
@@ -381,8 +381,8 @@ uint8_t LIS331::setInterruptSource(const byte interrupt, IntSource source)
         return err;
     }
 
-    bitWrite(intRegVal, LIS_INT_CFG_AOI, bitRead(source, LIS_INT_CFG_AOI));
-    bitWrite(intRegVal, LIS_INT_CFG_6D, bitRead(source, LIS_INT_CFG_6D));
+    bitWrite(intRegVal, LIS_INT_CFG_AOI, bitRead(static_cast<uint8_t>(source), LIS_INT_CFG_AOI));
+    bitWrite(intRegVal, LIS_INT_CFG_6D, bitRead(static_cast<uint8_t>(source), LIS_INT_CFG_6D));
 
     return writeReg(intRegAddr, intRegVal);
 }
@@ -402,7 +402,7 @@ uint8_t LIS331::isInterruptEnabled(const byte interrupt, const Axis axis, const 
     }
 
     byte bit = 0;
-    bit += 2 * axis;  // set X, Y or Z
+    bit += 2 * static_cast<uint8_t>(axis);  // set X, Y or Z
     bit += highEvent; // set high or low
 
     byte intCfgVal = 0;
@@ -429,7 +429,7 @@ uint8_t LIS331::setInterruptEnabled(const byte interrupt, const Axis axis, const
     }
 
     byte bit = 0;
-    bit += 2 * axis;  // set X, Y or Z
+    bit += 2 * static_cast<uint8_t>(axis);  // set X, Y or Z
     bit += highEvent; // set high or low
 
     byte intCfgVal = 0;
@@ -469,7 +469,7 @@ uint8_t LIS331::readInterrupt(const byte interrupt)
 uint8_t LIS331::getInterruptSource(const Axis axis, const bool highEvent, bool &ret)
 {
     byte bit = 0;
-    bit += 2 * axis;  // set X, Y or Z
+    bit += 2 * static_cast<uint8_t>(axis);  // set X, Y or Z
     bit += highEvent; // set high or low
 
     ret = bitRead(interruptSource, bit);

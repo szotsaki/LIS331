@@ -90,13 +90,13 @@
 class LIS331 final: protected LIS
 {
 public:
-    enum Scale : byte;
+    enum class Scale : byte;
 
 private:
     Scale currentScale;
 
 public:
-    enum PowerMode : byte
+    enum class PowerMode : byte
     {
         powerDown    = B00000000,
         normalMode   = B00100000,
@@ -107,7 +107,7 @@ public:
         lowPower10Hz = B11000000
     };
 
-    enum DataRate : byte
+    enum class DataRate : byte
     {
         odr50Hz    = B00000000,
         odr100Hz   = B00001000,
@@ -115,21 +115,21 @@ public:
         odr1000Hz  = B00011000
     };
 
-    enum Scale : byte
+    enum class Scale : byte
     {
         scale6g      = B00000000,
         scale12g     = B00010000,
         scale24g     = B00110000
     };
 
-    enum HighPassFilter : byte
+    enum class HighPassFilter : byte
     {
         hpfNormal       = B00000000,
         hpfReference    = B00100000,
         hpfConfigCutOff = B01000000
     };
 
-    enum HighPassCutOff : byte
+    enum class HighPassCutOff : byte
     {
         hpCutOff8       = B00000000,
         hpCutOff16      = B00000001,
@@ -137,7 +137,7 @@ public:
         hpCutOff64      = B00000011
     };
 
-    enum Int1DataSignal : byte
+    enum class Int1DataSignal : byte
     {
         ds1Interrupt1Source = B00000000,
         ds1Interrupt1Or2Src = B00000001,
@@ -145,7 +145,7 @@ public:
         ds1BootRunning      = B00000011
     };
 
-    enum Int2DataSignal : byte
+    enum class Int2DataSignal : byte
     {
         ds2Interrupt2Source = B00000000,
         ds2Interrupt1Or2Src = B00001000,
@@ -153,14 +153,14 @@ public:
         ds2BootRunning      = B00011000
     };
 
-    enum Axis : byte
+    enum class Axis : byte
     {
         X = 0,
         Y = 1,
         Z = 2
     };
 
-    enum IntSource : byte
+    enum class IntSource : byte
     {
         intsOrCombination   = B00000000,
         intsAndCombination  = B10000000,
