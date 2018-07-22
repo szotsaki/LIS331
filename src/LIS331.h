@@ -1,4 +1,4 @@
-/* Copyright © 2017 Szőts Ákos <szotsaki@gmail.com>
+/* Copyright © 2017-2018 Szőts Ákos <szotsaki@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,39 +20,11 @@
 #include <limits.h>
 
 #include "Arduino.h"
-#include <I2C.h>
 
-// More error codes besides the ones in I2C.h
-#ifndef E_OK
-  #define E_OK             0x0
-#endif // E_OK
-#define E_WRONG_INTERRUPT  0x75
-#define E_NUM_TOO_BIG      0x76
-#define E_WRONG_SCALE      0x77
+#include "LIS.h"
 
-// Register addresses
-#define LIS_CTRL_REG1       0x20
-#define LIS_CTRL_REG2       0x21
-#define LIS_CTRL_REG3       0x22
-#define LIS_CTRL_REG4       0x23
-#define LIS_CTRL_REG5       0x24
+// Different register addresses
 #define LIS_HP_FILTER_RESET 0x25
-#define LIS_REFERENCE       0x26
-#define LIS_STATUS_REG      0x27
-#define LIS_OUT_X_L         0x28
-#define LIS_OUT_X_H         0x29
-#define LIS_OUT_Y_L         0x2A
-#define LIS_OUT_Y_H         0x2B
-#define LIS_OUT_Z_L         0x2C
-#define LIS_OUT_Z_H         0x2D
-#define LIS_INT1_CFG        0x30
-#define LIS_INT1_SOURCE     0x31
-#define LIS_INT1_THS        0x32
-#define LIS_INT1_DURATION   0x33
-#define LIS_INT2_CFG        0x34
-#define LIS_INT2_SOURCE     0x35
-#define LIS_INT2_THS        0x36
-#define LIS_INT2_DURATION   0x37
 
 // Control register 1
 #define LIS_CTRL_REG1_PM2  7
@@ -115,26 +87,13 @@
 
 #define LIS_INT_SRC_IA       6
 
-class LIS331
+class LIS331 final: protected LIS
 {
 public:
     enum Scale : byte;
 
 private:
-    const uint8_t i2cAddress;
-    byte interruptSource;
     Scale currentScale;
-
-    uint8_t readReg(const byte addr, byte &val);
-    uint8_t writeReg(const byte addr, const byte val);
-
-    uint8_t readRegisterBit(const byte registerAddr, const byte bit, bool &ret);
-    uint8_t writeRegisterBit(const byte registerAddr, const byte bit, const bool enabled);
-
-    uint8_t getAxisValue(const byte addressLow, const byte addressHigh, int16_t &ret);
-
-    uint8_t getInterruptThresholdAndDuration(const byte address, byte &ret);
-    uint8_t setInterruptThresholdAndDuration(const byte address, const byte value);
 
 public:
     enum PowerMode : byte

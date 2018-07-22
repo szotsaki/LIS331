@@ -1,4 +1,4 @@
-/* Copyright © 2017 Szőts Ákos <szotsaki@gmail.com>
+/* Copyright © 2017-2018 Szőts Ákos <szotsaki@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,65 +17,9 @@
 #include "LIS331.h"
 
 LIS331::LIS331(const uint8_t i2cAddress)
-    : i2cAddress(i2cAddress),
-      interruptSource(0),
+    : LIS(i2cAddress),
       currentScale(Scale::scale6g)
 {
-
-}
-
-uint8_t LIS331::readReg(const byte addr, byte &val)
-{
-    return I2c.read(i2cAddress, addr, 1, &val);
-}
-
-uint8_t LIS331::writeReg(const byte addr, const byte val)
-{
-    return I2c.write(i2cAddress, addr, val);
-}
-
-uint8_t LIS331::readRegisterBit(const byte registerAddr, const byte bit, bool &ret)
-{
-    byte registerValue = 0;
-    const uint8_t err = readReg(registerAddr, registerValue);
-    if (err != E_OK) {
-        return err;
-    }
-
-    ret = bitRead(registerValue, bit);
-    return E_OK;
-}
-
-uint8_t LIS331::writeRegisterBit(const byte registerAddr, const byte bit, const bool enabled)
-{
-    byte registerValue = 0;
-    const uint8_t err = readReg(registerAddr, registerValue);
-    if (err != E_OK) {
-        return err;
-    }
-
-    bitWrite(registerValue, bit, enabled);
-    return writeReg(registerAddr, registerValue);
-}
-
-uint8_t LIS331::getAxisValue(const byte addressLow, const byte addressHigh, int16_t &ret)
-{
-    byte low = 0;
-    byte high = 0;
-
-    uint8_t err = readReg(addressLow, low);
-    if (err != E_OK) {
-        return err;
-    }
-
-    err = readReg(addressHigh, high);
-    if (err != E_OK) {
-        return err;
-    }
-
-    ret = ((high << 8) | low) / 16;
-
-    return E_OK;
 }
 
 // Control register 1
@@ -655,24 +599,4 @@ uint8_t LIS331::setInterruptDuration(const byte interrupt, const byte duration)
     }
 
     return setInterruptThresholdAndDuration(intDurAddr, duration);
-}
-
-uint8_t LIS331::getInterruptThresholdAndDuration(const byte address, byte &ret)
-{
-    const uint8_t err = readReg(address, ret);
-    if (err != E_OK) {
-        return err;
-    }
-
-    bitClear(ret, CHAR_BIT - 1);
-    return E_OK;
-}
-
-uint8_t LIS331::setInterruptThresholdAndDuration(const byte address, const byte value)
-{
-    if (bitRead(value, CHAR_BIT - 1) == 1) {
-        return E_NUM_TOO_BIG;
-    }
-
-    return writeReg(address, value);
 }
