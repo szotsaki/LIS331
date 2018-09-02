@@ -1,5 +1,5 @@
-LIS331 triple-axis accelerometer library for Arduino
-========================
+LIS331HH and LIS3DH triple-axis accelerometer library for Arduino
+=================================================================
 
 Implements all features of the STMicroelectronics [LIS331HH](http://www.st.com/content/st_com/en/products/mems-and-sensors/accelerometers/lis331hh.html) accelerometer according to its data sheet. Should be compatible with [LIS331DLH](http://www.st.com/content/st_com/en/products/mems-and-sensors/accelerometers/lis331dlh.html) and [H3LIS331DL](http://www.st.com/en/mems-and-sensors/h3lis331dl.html) apart from the selectable scale:
 

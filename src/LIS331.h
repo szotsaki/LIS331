@@ -32,9 +32,7 @@
 #define LIS_CTRL_REG1_PM0  5
 #define LIS_CTRL_REG1_DR1  4
 #define LIS_CTRL_REG1_DR0  3
-#define LIS_CTRL_REG1_ZEN  2
-#define LIS_CTRL_REG1_YEN  1
-#define LIS_CTRL_REG1_XEN  0
+// Common                  2..0
 
 // Control register 2
 #define LIS_CTRL_REG2_BOOT  7
@@ -43,8 +41,7 @@
 #define LIS_CTRL_REG2_FDS   4
 #define LIS_CTRL_REG2_HPEN2 3
 #define LIS_CTRL_REG2_HPEN1 2
-#define LIS_CTRL_REG2_HPCF1 1
-#define LIS_CTRL_REG2_HPCF0 0
+// Common                   1..0
 
 // Control register 3
 #define LIS_CTRL_REG3_IHL     7
@@ -58,43 +55,19 @@
 
 // Control register 4
 #define LIS_CTRL_REG4_BDU    7
-// BLE                       6
-#define LIS_CTRL_REG4_FS1    5
-#define LIS_CTRL_REG4_FS0    4
+// Common                    6..4
 #define LIS_CTRL_REG4_STSIGN 3
 // 0                         2
 #define LIS_CTRL_REG4_ST     1
-// SIM                       0
+// Common                    0
 
 // Control register 5
 // Unused                      7..2
 #define LIS_CTRL_REG5_TURNON_1 1
 #define LIS_CTRL_REG5_TURNON_0 0
 
-// Status register
-#define LIS_STATUS_REG_ZYXOR 7
-#define LIS_STATUS_REG_ZOR   6
-#define LIS_STATUS_REG_YOR   5
-#define LIS_STATUS_REG_XOR   4
-#define LIS_STATUS_REG_ZYXDA 3
-#define LIS_STATUS_REG_ZDA   2
-#define LIS_STATUS_REG_YDA   1
-#define LIS_STATUS_REG_XDA   0
-
-// Interrupt registers
-#define LIS_INT_CFG_AOI      7
-#define LIS_INT_CFG_6D       6
-
-#define LIS_INT_SRC_IA       6
-
-class LIS331 final: protected LIS
+class LIS331 final: public LIS
 {
-public:
-    enum class Scale : byte;
-
-private:
-    Scale currentScale;
-
 public:
     enum class PowerMode : byte
     {
@@ -115,26 +88,11 @@ public:
         odr1000Hz  = B00011000
     };
 
-    enum class Scale : byte
-    {
-        scale6g      = B00000000,
-        scale12g     = B00010000,
-        scale24g     = B00110000
-    };
-
     enum class HighPassFilter : byte
     {
         hpfNormal       = B00000000,
         hpfReference    = B00100000,
         hpfConfigCutOff = B01000000
-    };
-
-    enum class HighPassCutOff : byte
-    {
-        hpCutOff8       = B00000000,
-        hpCutOff16      = B00000001,
-        hpCutOff32      = B00000010,
-        hpCutOff64      = B00000011
     };
 
     enum class Int1DataSignal : byte
@@ -153,21 +111,6 @@ public:
         ds2BootRunning      = B00011000
     };
 
-    enum class Axis : byte
-    {
-        X = 0,
-        Y = 1,
-        Z = 2
-    };
-
-    enum class IntSource : byte
-    {
-        intsOrCombination   = B00000000,
-        intsAndCombination  = B10000000,
-        ints6DirMovementRec = B01000000,
-        ints6DirPositionRec = B11000000
-    };
-
     explicit LIS331(const uint8_t i2cAddress = 0x18);
 
     // Control register 1
@@ -177,102 +120,23 @@ public:
     uint8_t getDataRate(DataRate &ret);
     uint8_t setDataRate(const DataRate dataRate);
 
-    inline uint8_t isXEnabled(bool &ret) {
-        return readRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_XEN, ret);
-    }
-
-    inline uint8_t isYEnabled(bool &ret) {
-        return readRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_YEN, ret);
-    }
-
-    inline uint8_t isZEnabled(bool &ret) {
-        return readRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_ZEN, ret);
-    }
-
-    inline uint8_t setXEnabled(const bool enabled) {
-        return writeRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_XEN, enabled);
-    }
-
-    inline uint8_t setYEnabled(const bool enabled) {
-        return writeRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_YEN, enabled);
-    }
-
-    inline uint8_t setZEnabled(const bool enabled) {
-        return writeRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_ZEN, enabled);
-    }
-
-    // X, Y, Z axes
-    /**
-     * @brief getAxisValuesG
-     * @param x
-     * @param y
-     * @param z
-     * @return The acceleration in [g] for all three axes
-     */
-    uint8_t getAxisValuesG(float &x, float &y, float &z);
-
-    inline uint8_t getXValue(int16_t &ret) {
-        return getAxisValue(LIS_OUT_X_L, LIS_OUT_X_H, ret);
-    }
-
-    inline uint8_t getYValue(int16_t &ret) {
-        return getAxisValue(LIS_OUT_Y_L, LIS_OUT_Y_H, ret);
-    }
-
-    inline uint8_t getZValue(int16_t &ret) {
-        return getAxisValue(LIS_OUT_Z_L, LIS_OUT_Z_H, ret);
-    }
-
     // Control register 2
-
-    /**
-     * @see setRebootMemoryContent
-     * @brief getRebootMemoryContent
-     * @return
-     */
-    inline uint8_t getRebootMemoryContent(bool &ret) {
+    inline uint8_t getRebootMemoryContent(bool &ret) override final {
         return readRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_BOOT, ret);
     }
 
-    /**
-     * BOOT bit is used to refresh the content of internal registers stored in the flash memory
-     * block. At the device power up the content of the flash memory block is transferred to the
-     * internal registers related to trimming functions to permit a good behavior of the device itself.
-     * If for any reason the content of trimming registers was changed it is sufficient to use this bit
-     * to restore correct values. When BOOT bit is set to ‘1’ the content of internal flash is copied
-     * inside corresponding internal registers and it is used to calibrate the device. These values
-     * are factory trimmed and they are different for every accelerometer. They permit a good
-     * behavior of the device and normally they have not to be changed. At the end of the boot
-     * process the BOOT bit is set again to ‘0’.
-     *
-     * @brief setRebootMemoryContent
-     * @param reboot false: normal mode
-     *               true:  reboot memory content
-     * @return
-     */
-    inline uint8_t setRebootMemoryContent(const bool reboot) {
+    inline uint8_t setRebootMemoryContent(const bool reboot) override final {
         return writeRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_BOOT, reboot);
     }
 
     uint8_t getHighPassFilterMode(HighPassFilter &ret);
     uint8_t setHighPassFilterMode(const HighPassFilter mode);
 
-    /**
-     * @brief isFilteredDataSection
-     * @return false: internal filter bypassed;
-     *         true:  data from internal filter sent to output register
-     */
-    inline uint8_t isFilteredDataSection(bool &ret) {
+    inline uint8_t isFilteredDataSection(bool &ret) override final {
         return readRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_FDS, ret);
     }
 
-    /**
-     * @brief setFilteredDataSection
-     * @param enabled false: internal filter bypassed;
-     *                true:  data from internal filter sent to output register
-     * @return
-     */
-    inline uint8_t setFilteredDataSection(const bool enabled) {
+    inline uint8_t setFilteredDataSection(const bool enabled) override final {
         return writeRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_FDS, enabled);
     }
 
@@ -310,61 +174,18 @@ public:
         return writeRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_HPEN2, enabled);
     }
 
-    uint8_t getHighPassCutOff(HighPassCutOff &ret);
-    uint8_t setHighPassCutOff(const HighPassCutOff mode);
-
-    /**
-      * If the high pass filter is enabled, all three axes are instantaneously set to 0g.
-      * This allows to overcome the settling time of the high pass filter.
-      * @brief resetHighPassFilter
-      * @return
-      */
-    inline uint8_t resetHighPassFilter() {
+    inline uint8_t resetHighPassFilter() override final {
         byte tmp = 0;
         // Dummy register. Reading at this address zeroes instantaneously the content of the internal high pass-filter
         return readReg(LIS_HP_FILTER_RESET, tmp);
     }
 
-    /**
-     * @see setHPReference()
-     * @brief getHPReference
-     * @return
-     */
-    inline uint8_t getHPReference(byte &reference) {
-        return readReg(LIS_REFERENCE, reference);
-    }
-
-    /**
-      * This register sets the acceleration value taken as a reference for the high-pass filter output.
-      * When filter is turned on (at least one of setFilteredDataSection(), setHPenabledForInterrupt1(),
-      * or setHPenabledForInterrupt2() is enabled) and setHighPassFilterMode() is set to “hpfReference”,
-      * filter out is generated taking this value as a reference.
-      *
-      * @brief setHPReference
-      * @param reference
-      * @return
-      */
-    inline uint8_t setHPReference(const byte reference) {
-        return writeReg(LIS_REFERENCE, reference);
-    }
-
     // Control register 3
-    /**
-      * @brief isInterruptActiveHL
-      * @return false: active high (default)
-      *          true: active low
-      */
-    inline uint8_t isInterruptActiveHL(bool &ret) {
-        return readRegisterBit(LIS_CTRL_REG3, LIS_CTRL_REG3_IHL, ret);
+    inline uint8_t getInterruptPolarity(bool &ret_low) override final {
+        return readRegisterBit(LIS_CTRL_REG3, LIS_CTRL_REG3_IHL, ret_low);
     }
 
-    /**
-      * @brief setInterruptActiveHL
-      * @param active false: active high (the level on interrupt pin is low and goes high when the interrupt occurs)
-      *                true: active low (the level on interrupt pin is high and goes low when the interrupt occurs)
-      * @return
-      */
-    inline uint8_t setInterruptActiveHL(bool low) {
+    inline uint8_t setInterruptPolarity(bool low) override final {
         return writeRegisterBit(LIS_CTRL_REG3, LIS_CTRL_REG3_IHL, low);
     }
 
@@ -387,23 +208,8 @@ public:
         return writeRegisterBit(LIS_CTRL_REG3, LIS_CTRL_REG3_PP_OD, ppod);
     }
 
-    /**
-      * @brief isInterruptLatched The interrupt register is cleared by calling readInterrupt().
-      *        Default value: false
-      * @param interrupt 1 or 2 depending on pin assignment
-      * @return false: interrupt request not latched
-      *          true: interrupt request latched
-      */
-    uint8_t isInterruptLatched(const byte interrupt, bool &ret);
-
-    /**
-      * @brief setInterruptLatched Latch interrupt request. The register is cleared by calling readInterrupt()
-      * @param interrupt 1 or 2 depending on pin assignment
-      * @param value false: interrupt request not latched
-      *               true: interrupt request latched
-      * @return
-      */
-    uint8_t setInterruptLatched(const byte interrupt, const bool latched);
+    uint8_t isInterruptLatched(const byte interrupt, bool &ret) override final;
+    uint8_t setInterruptLatched(const byte interrupt, const bool latched) override final;
 
     uint8_t getInt1DataSignal(Int1DataSignal &ret);
     uint8_t getInt2DataSignal(Int2DataSignal &ret);
@@ -412,54 +218,15 @@ public:
     uint8_t setDataSignal(const Int2DataSignal signal);
 
     // Control register 4
-    /**
-     * @brief isBDUEnabled: Block data update. Default value: 0
-     * @return true:  output registers not updated between MSB and LSB reading
-     *         false: continuos update
-     */
-    inline uint8_t isBDUEnabled(bool &ret) {
-        return readRegisterBit(LIS_CTRL_REG4, LIS_CTRL_REG4_BDU, ret);
-    }
-
-    /**
-     * @brief setBDUEnabled: Block data update. Default value: 0
-     * @param enabled true:  output registers not updated between MSB and LSB reading
-     *                false: continuos update
-     * @return
-     */
-    inline uint8_t setBDUEnabled(const bool enabled) {
-        return writeRegisterBit(LIS_CTRL_REG4, LIS_CTRL_REG4_BDU, enabled);
-    }
-
-    uint8_t getScale(Scale &ret);
-    uint8_t setScale(const Scale scale);
-
-    /**
-     * @brief getSelfTestSign Self-test sign. Default value: 0
-     * @return true:  self-test minus
-     *         false: self-test plus
-     */
-    inline uint8_t getSelfTestSign(bool &ret) {
+    inline uint8_t getSelfTestSign(bool &ret) override final {
         return readRegisterBit(LIS_CTRL_REG4, LIS_CTRL_REG4_STSIGN, ret);
     }
 
-    /**
-     * @brief setSelfTestSign Self-test sign. Default value: 0
-     * @param sign true:  self-test minus
-     *             false: self-test plus
-     * @return
-     */
-    inline uint8_t setSelfTestSign(const bool sign) {
-        return writeRegisterBit(LIS_CTRL_REG4, LIS_CTRL_REG4_STSIGN, sign);
-    }
-
-    inline uint8_t isSelfTestEnabled(bool &ret) {
+    inline uint8_t isSelfTestEnabled(bool &ret) override final {
         return readRegisterBit(LIS_CTRL_REG4, LIS_CTRL_REG4_ST, ret);
     }
 
-    inline uint8_t setSelfTestEnabled(const bool enabled) {
-        return writeRegisterBit(LIS_CTRL_REG4, LIS_CTRL_REG4_ST, enabled);
-    }
+    uint8_t setSelfTestEnabled(const bool enabled, const bool sign) override final;
 
     // Control register 5
     /**
@@ -473,152 +240,6 @@ public:
       */
     uint8_t isSleepToWakeEnabled(bool &ret);
     uint8_t setSleepToWakeEnabled(const bool enabled);
-
-    // Status register
-    inline uint8_t isAllDataOverrun(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_ZYXOR, ret);
-    }
-
-    inline uint8_t isXDataOverrun(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_XOR, ret);
-    }
-
-    inline uint8_t isYDataOverrun(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_YOR, ret);
-    }
-
-    inline uint8_t isZDataOverrun(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_ZOR, ret);
-    }
-
-    inline uint8_t isAllDataAvailable(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_ZYXDA, ret);
-    }
-
-    inline uint8_t isXDataAvailable(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_XDA, ret);
-    }
-
-    inline uint8_t isYDataAvailable(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_YDA, ret);
-    }
-
-    inline uint8_t isZDataAvailable(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_ZDA, ret);
-    }
-
-    // Interrupt config register
-    uint8_t getInterruptSource(const byte interrupt, IntSource &ret);
-    uint8_t setInterruptSource(const byte interrupt, IntSource source);
-
-    /**
-     * @see setInterruptEnabled()
-     * @brief isInterruptEnabled
-     * @param interrupt
-     * @param axis
-     * @param highEvent
-     * @param ret
-     * @return
-     */
-    uint8_t isInterruptEnabled(const byte interrupt, const Axis axis, const bool highEvent, bool &ret);
-
-    /**
-     * @brief setInterruptEnabled
-     * @param interrupt 1 or 2
-     * @param axis
-     * @param highEvent True to enable interrupt request on measured acceleration value higher than
-     *                  preset threshold.
-     * @param enabled
-     * @return
-     */
-    uint8_t setInterruptEnabled(const byte interrupt, const Axis axis, const bool highEvent, const bool enabled);
-
-    // Interrupt source register
-    /**
-      * Reading at this address clears isInterruptGenerated() bit (and the interrupt signal on the pin) and
-      * allows the refreshment of data in the interrupt source register if the latched option was chosen
-      * with setInterruptLatched().
-      *
-      * This function reads the entire register into a temporal variable, thus:
-      *   - it's possible to gather information based on one consistent state with the isInterruptGenerated()
-      *     and getInterruptSource() functions;
-      *   - it's necessary to call this function before you call any of the two aforementioned functions.
-      * @brief readInterrupt
-      * @param interrupt
-      * @return
-      */
-    uint8_t readInterrupt(const byte interrupt);
-
-    inline uint8_t isInterruptGenerated(bool &ret) {
-        ret = bitRead(interruptSource, LIS_INT_SRC_IA);
-        return E_OK;
-    }
-
-    /**
-     * @brief getInterruptSource Returns whether the requested event occurred
-     * @param axis If the event occurred because of this axis
-     * @param highEvent If the event occurred because of a high event (see setInterruptEnabled() documentation)
-     * @param ret Whether the specified interrupt occurred because of that axis and because of highEvent
-     * @return
-     */
-    uint8_t getInterruptSource(const Axis axis, const bool highEvent, bool &ret);
-
-    // Interrupt threshold register
-    /**
-     * @see setInterruptThreshold()
-     * @brief getInterruptThreshold
-     * @param interrupt
-     * @param ret
-     * @return
-     */
-    uint8_t getInterruptThreshold(const byte interrupt, byte &ret);
-
-    /**
-     * @brief setInterruptThreshold
-     * @param interrupt
-     * @param threshold Must be between 0..127
-     * @return
-     */
-    uint8_t setInterruptThreshold(const byte interrupt, const byte threshold);
-
-    /**
-     * @see setInterruptThresholdG()
-     * @brief getInterruptThresholdG
-     * @param interrupt
-     * @param ret
-     * @return
-     */
-    uint8_t getInterruptThresholdG(const byte interrupt, float &ret);
-
-    /**
-     * @brief setInterruptThresholdG Use [g] values to set an interrupt threshold instead of raw values.
-     *        Since the resolution is not infinite, it may not be set to exact value. If it is the case,
-     *        the raw value will be rounded down to the nearest acceptable. It is worth running
-     *        getInterruptThresholdG() to obtain the programmed value (or calculate it manually).
-     * @param interrupt 1 or 2
-     * @param threshold Must be smaller or equal than the configured scale (6g, 12g, or 24g)
-     * @return
-     */
-    uint8_t setInterruptThresholdG(const byte interrupt, const float threshold);
-
-    // Interrupt duration register
-    /**
-     * @see setInterruptDuration()
-     * @brief getInterruptDuration
-     * @param interrupt
-     * @param ret
-     * @return
-     */
-    uint8_t getInterruptDuration(const byte interrupt, byte &ret);
-
-    /**
-     * @brief setInterruptDuration Sets the minimum duration of the interrupt event to be recognized
-     * @param interrupt
-     * @param duration Must be between 0..127. Duration time steps and maximum values depend on the
-     *        DataRate chosen.
-     * @return
-     */
-    uint8_t setInterruptDuration(const byte interrupt, const byte duration);
 };
 
 #endif // LIS331_H

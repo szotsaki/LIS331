@@ -17,9 +17,9 @@
 #include "LIS331.h"
 
 LIS331::LIS331(const uint8_t i2cAddress)
-    : LIS(i2cAddress),
-      currentScale(Scale::scale6g)
+    : LIS(i2cAddress, SensorType::LIS331HH, Scale::scale6g)
 {
+    precision = 12;
 }
 
 // Control register 1
@@ -86,47 +86,6 @@ uint8_t LIS331::setDataRate(const DataRate dataRate)
     return writeReg(LIS_CTRL_REG1, ctrlReg1);
 }
 
-uint8_t LIS331::getAxisValuesG(float &x, float &y, float &z)
-{
-    int16_t x_ = 0, y_ = 0, z_ = 0;
-
-    uint8_t err = getXValue(x_);
-    if (err != E_OK) {
-        return err;
-    }
-
-    err = getYValue(y_);
-    if (err != E_OK) {
-        return err;
-    }
-
-    err = getZValue(z_);
-    if (err != E_OK) {
-        return err;
-    }
-
-    float scale = 0.0f;
-    switch (currentScale) {
-    case Scale::scale6g:
-        scale = (6 * 2) / 4096.0f;
-        break;
-    case Scale::scale12g:
-        scale = (12 * 2) / 4096.0f;
-        break;
-    case Scale::scale24g:
-        scale = (24 * 2) / 4096.0f;
-        break;
-    default:
-        return E_WRONG_SCALE;
-    }
-
-    x = x_ * scale;
-    y = y_ * scale;
-    z = z_ * scale;
-
-    return E_OK;
-}
-
 uint8_t LIS331::getHighPassFilterMode(HighPassFilter &ret)
 {
     byte ctrlReg2 = 0;
@@ -153,36 +112,6 @@ uint8_t LIS331::setHighPassFilterMode(const HighPassFilter mode)
 
     bitWrite(ctrlReg2, LIS_CTRL_REG2_HPM0, bitRead(static_cast<uint8_t>(mode), LIS_CTRL_REG2_HPM0));
     bitWrite(ctrlReg2, LIS_CTRL_REG2_HPM1, bitRead(static_cast<uint8_t>(mode), LIS_CTRL_REG2_HPM1));
-
-    return writeReg(LIS_CTRL_REG2, ctrlReg2);
-}
-
-uint8_t LIS331::getHighPassCutOff(HighPassCutOff &ret)
-{
-    byte ctrlReg2 = 0;
-    const uint8_t err = readReg(LIS_CTRL_REG2, ctrlReg2);
-    if (err != E_OK) {
-        return err;
-    }
-
-    byte mode = 0;
-    bitWrite(mode, LIS_CTRL_REG2_HPCF0, bitRead(ctrlReg2, LIS_CTRL_REG2_HPCF0));
-    bitWrite(mode, LIS_CTRL_REG2_HPCF1, bitRead(ctrlReg2, LIS_CTRL_REG2_HPCF1));
-
-    ret = HighPassCutOff(mode);
-    return E_OK;
-}
-
-uint8_t LIS331::setHighPassCutOff(const HighPassCutOff mode)
-{
-    byte ctrlReg2 = 0;
-    const uint8_t err = readReg(LIS_CTRL_REG2, ctrlReg2);
-    if (err != E_OK) {
-        return err;
-    }
-
-    bitWrite(ctrlReg2, LIS_CTRL_REG2_HPCF0, bitRead(static_cast<uint8_t>(mode), LIS_CTRL_REG2_HPCF0));
-    bitWrite(ctrlReg2, LIS_CTRL_REG2_HPCF1, bitRead(static_cast<uint8_t>(mode), LIS_CTRL_REG2_HPCF1));
 
     return writeReg(LIS_CTRL_REG2, ctrlReg2);
 }
@@ -269,41 +198,12 @@ uint8_t LIS331::setDataSignal(const Int2DataSignal signal)
     return writeReg(LIS_CTRL_REG3, ctrlReg3);
 }
 
-uint8_t LIS331::getScale(Scale &ret)
+uint8_t LIS331::setSelfTestEnabled(const bool enabled, const bool sign)
 {
-    byte ctrlReg4 = 0;
-    const uint8_t err = readReg(LIS_CTRL_REG4, ctrlReg4);
-    if (err != E_OK) {
-        return err;
-    }
+    const uint8_t r1 = writeRegisterBit(LIS_CTRL_REG4, LIS_CTRL_REG4_STSIGN, sign);
+    const uint8_t r2 = writeRegisterBit(LIS_CTRL_REG4, LIS_CTRL_REG4_ST, enabled);
 
-    byte scale = 0;
-    bitWrite(scale, LIS_CTRL_REG4_FS0, bitRead(ctrlReg4, LIS_CTRL_REG4_FS0));
-    bitWrite(scale, LIS_CTRL_REG4_FS1, bitRead(ctrlReg4, LIS_CTRL_REG4_FS1));
-
-    ret = Scale(scale);
-    currentScale = ret;
-
-    return E_OK;
-}
-
-uint8_t LIS331::setScale(const Scale scale)
-{
-    byte ctrlReg4 = 0;
-    uint8_t err = readReg(LIS_CTRL_REG4, ctrlReg4);
-    if (err != E_OK) {
-        return err;
-    }
-
-    bitWrite(ctrlReg4, LIS_CTRL_REG4_FS0, bitRead(static_cast<uint8_t>(scale), LIS_CTRL_REG4_FS0));
-    bitWrite(ctrlReg4, LIS_CTRL_REG4_FS1, bitRead(static_cast<uint8_t>(scale), LIS_CTRL_REG4_FS1));
-
-    err = writeReg(LIS_CTRL_REG4, ctrlReg4);
-    if (err == E_OK) {
-        currentScale = scale;
-    }
-
-    return err;
+    return r1 != E_OK ? r1 : r2;
 }
 
 uint8_t LIS331::isSleepToWakeEnabled(bool &ret)
@@ -330,273 +230,4 @@ uint8_t LIS331::setSleepToWakeEnabled(const bool enabled)
     bitWrite(ctrlReg5, LIS_CTRL_REG5_TURNON_1, enabled);
 
     return writeReg(LIS_CTRL_REG5, ctrlReg5);
-}
-
-uint8_t LIS331::getInterruptSource(const byte interrupt, IntSource &ret)
-{
-    byte intRegAddr = 0;
-    switch (interrupt) {
-    case 1:
-        intRegAddr = LIS_INT1_CFG;
-        break;
-    case 2:
-        intRegAddr = LIS_INT2_CFG;
-        break;
-    default:
-        return E_WRONG_INTERRUPT;
-    }
-
-    byte intRegVal = 0;
-    const uint8_t err = readReg(intRegAddr, intRegVal);
-    if (err != E_OK) {
-        return err;
-    }
-
-    byte source = 0;
-    bitWrite(source, LIS_INT_CFG_AOI, bitRead(intRegVal, LIS_INT_CFG_AOI));
-    bitWrite(source, LIS_INT_CFG_6D, bitRead(intRegVal, LIS_INT_CFG_6D));
-
-    ret = IntSource(source);
-    return E_OK;
-}
-
-uint8_t LIS331::setInterruptSource(const byte interrupt, IntSource source)
-
-{
-    byte intRegAddr = 0;
-    switch (interrupt) {
-    case 1:
-        intRegAddr = LIS_INT1_CFG;
-        break;
-    case 2:
-        intRegAddr = LIS_INT2_CFG;
-        break;
-    default:
-        return E_WRONG_INTERRUPT;
-    }
-
-    byte intRegVal = 0;
-    const uint8_t err = readReg(intRegAddr, intRegVal);
-    if (err != E_OK) {
-        return err;
-    }
-
-    bitWrite(intRegVal, LIS_INT_CFG_AOI, bitRead(static_cast<uint8_t>(source), LIS_INT_CFG_AOI));
-    bitWrite(intRegVal, LIS_INT_CFG_6D, bitRead(static_cast<uint8_t>(source), LIS_INT_CFG_6D));
-
-    return writeReg(intRegAddr, intRegVal);
-}
-
-uint8_t LIS331::isInterruptEnabled(const byte interrupt, const Axis axis, const bool highEvent, bool &ret)
-{
-    byte intCfgAddr = 0;
-    switch (interrupt) { // TODO: Simplify with C++17 Structured Bindings
-    case 1:
-        intCfgAddr = LIS_INT1_CFG;
-        break;
-    case 2:
-        intCfgAddr = LIS_INT2_CFG;
-        break;
-    default:
-        return E_WRONG_INTERRUPT;
-    }
-
-    byte bit = 0;
-    bit += 2 * static_cast<uint8_t>(axis);  // set X, Y or Z
-    bit += highEvent; // set high or low
-
-    byte intCfgVal = 0;
-    const uint8_t err = readReg(intCfgAddr, intCfgVal);
-    if (err != E_OK) {
-        return err;
-    }
-
-    return readRegisterBit(intCfgAddr, bit, ret);
-}
-
-uint8_t LIS331::setInterruptEnabled(const byte interrupt, const Axis axis, const bool highEvent, const bool enabled)
-{
-    byte intCfgAddr = 0;
-    switch (interrupt) { // TODO: Simplify with C++17 Structured Bindings
-    case 1:
-        intCfgAddr = LIS_INT1_CFG;
-        break;
-    case 2:
-        intCfgAddr = LIS_INT2_CFG;
-        break;
-    default:
-        return E_WRONG_INTERRUPT;
-    }
-
-    byte bit = 0;
-    bit += 2 * static_cast<uint8_t>(axis);  // set X, Y or Z
-    bit += highEvent; // set high or low
-
-    byte intCfgVal = 0;
-    const uint8_t err = readReg(intCfgAddr, intCfgVal);
-    if (err != E_OK) {
-        return err;
-    }
-
-    bitWrite(intCfgVal, bit, enabled);
-    return writeReg(intCfgAddr, intCfgVal);
-}
-
-uint8_t LIS331::readInterrupt(const byte interrupt)
-{
-    byte intSrcAddr = 0;
-    switch (interrupt) { // TODO: Simplify with C++17 Structured Bindings
-    case 1:
-        intSrcAddr = LIS_INT1_SOURCE;
-        break;
-    case 2:
-        intSrcAddr = LIS_INT2_SOURCE;
-        break;
-    default:
-        return E_WRONG_INTERRUPT;
-    }
-
-    byte intSrcVal = 0;
-    const uint8_t err = readReg(intSrcAddr, intSrcVal);
-    if (err != E_OK) {
-        return err;
-    }
-
-    interruptSource = intSrcVal;
-    return E_OK;
-}
-
-uint8_t LIS331::getInterruptSource(const Axis axis, const bool highEvent, bool &ret)
-{
-    byte bit = 0;
-    bit += 2 * static_cast<uint8_t>(axis);  // set X, Y or Z
-    bit += highEvent; // set high or low
-
-    ret = bitRead(interruptSource, bit);
-    return E_OK;
-}
-
-uint8_t LIS331::getInterruptThreshold(const byte interrupt, byte &ret)
-{
-    byte intThsAddr = 0;
-    switch (interrupt) { // TODO: Simplify with C++17 Structured Bindings
-    case 1:
-        intThsAddr = LIS_INT1_THS;
-        break;
-    case 2:
-        intThsAddr = LIS_INT2_THS;
-        break;
-    default:
-        return E_WRONG_INTERRUPT;
-    }
-
-    return getInterruptThresholdAndDuration(intThsAddr, ret);
-}
-
-uint8_t LIS331::setInterruptThreshold(const byte interrupt, const byte threshold)
-{
-    byte intThsAddr = 0;
-    switch (interrupt) { // TODO: Simplify with C++17 Structured Bindings
-    case 1:
-        intThsAddr = LIS_INT1_THS;
-        break;
-    case 2:
-        intThsAddr = LIS_INT2_THS;
-        break;
-    default:
-        return E_WRONG_INTERRUPT;
-    }
-
-    return setInterruptThresholdAndDuration(intThsAddr, threshold);
-}
-
-uint8_t LIS331::getInterruptThresholdG(const byte interrupt, float &ret)
-{
-    float scale = 0.0f;
-    switch (currentScale) {
-    case Scale::scale6g:
-        scale = 6 / 127.0f;
-        break;
-    case Scale::scale12g:
-        scale = 12 / 127.0f;
-        break;
-    case Scale::scale24g:
-        scale = 24 / 127.0f;
-        break;
-    default:
-        return E_WRONG_SCALE;
-    }
-
-    byte rawThreshold = 0;
-    const uint8_t err = getInterruptThreshold(interrupt, rawThreshold);
-    if (err != E_OK) {
-        return err;
-    }
-
-    ret = rawThreshold * scale;
-    return E_OK;
-}
-
-uint8_t LIS331::setInterruptThresholdG(const byte interrupt, const float threshold)
-{
-    float scale = 0.0f;
-    switch (currentScale) {
-    case Scale::scale6g:
-        if (threshold > 6) {
-            return E_NUM_TOO_BIG;
-        }
-        scale = 6 / 127.0f;
-        break;
-    case Scale::scale12g:
-        if (threshold > 12) {
-            return E_NUM_TOO_BIG;
-        }
-        scale = 12 / 127.0f;
-        break;
-    case Scale::scale24g:
-        if (threshold > 24) {
-            return E_NUM_TOO_BIG;
-        }
-        scale = 24 / 127.0f;
-        break;
-    default:
-        return E_WRONG_SCALE;
-    }
-
-    const byte rawValue = static_cast<const byte>(threshold / scale); // round: floor
-    return setInterruptThreshold(interrupt, rawValue);
-}
-
-uint8_t LIS331::getInterruptDuration(const byte interrupt, byte &ret)
-{
-    byte intDurAddr = 0;
-    switch (interrupt) { // TODO: Simplify with C++17 Structured Bindings
-    case 1:
-        intDurAddr = LIS_INT1_DURATION;
-        break;
-    case 2:
-        intDurAddr = LIS_INT2_DURATION;
-        break;
-    default:
-        return E_WRONG_INTERRUPT;
-    }
-
-    return getInterruptThresholdAndDuration(intDurAddr, ret);
-}
-
-uint8_t LIS331::setInterruptDuration(const byte interrupt, const byte duration)
-{
-    byte intDurAddr = 0;
-    switch (interrupt) { // TODO: Simplify with C++17 Structured Bindings
-    case 1:
-        intDurAddr = LIS_INT1_DURATION;
-        break;
-    case 2:
-        intDurAddr = LIS_INT2_DURATION;
-        break;
-    default:
-        return E_WRONG_INTERRUPT;
-    }
-
-    return setInterruptThresholdAndDuration(intDurAddr, duration);
 }
