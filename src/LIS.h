@@ -188,42 +188,17 @@ protected:
     uint8_t setInterruptThresholdAndDuration(const byte address, const byte value);
 
 public:
-    // TODO Refactor to use Axis
-    inline uint8_t isXEnabled(bool &ret) {
-        return readRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_XEN, ret);
-    }
-
-    inline uint8_t isYEnabled(bool &ret) {
-        return readRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_YEN, ret);
-    }
-
-    inline uint8_t isZEnabled(bool &ret) {
-        return readRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_ZEN, ret);
-    }
-
-    inline uint8_t setXEnabled(const bool enabled) {
-        return writeRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_XEN, enabled);
-    }
-
-    inline uint8_t setYEnabled(const bool enabled) {
-        return writeRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_YEN, enabled);
-    }
-
-    inline uint8_t setZEnabled(const bool enabled) {
-        return writeRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_ZEN, enabled);
-    }
-
     // X, Y, Z axes
-    inline uint8_t getXValue(int16_t &ret) {
-        return getAxisValue(LIS_OUT_X_L, LIS_OUT_X_H, ret);
+    inline uint8_t isAxisEnabled(const Axis axis, bool &ret) {
+        return readRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_XEN + static_cast<uint8_t>(axis), ret);
     }
 
-    inline uint8_t getYValue(int16_t &ret) {
-        return getAxisValue(LIS_OUT_Y_L, LIS_OUT_Y_H, ret);
+    inline uint8_t setAxisEnabled(const Axis axis, const bool enabled) {
+        return writeRegisterBit(LIS_CTRL_REG1, LIS_CTRL_REG1_XEN + static_cast<uint8_t>(axis), enabled);
     }
 
-    inline uint8_t getZValue(int16_t &ret) {
-        return getAxisValue(LIS_OUT_Z_L, LIS_OUT_Z_H, ret);
+    inline uint8_t getAxisValue(const Axis axis, int16_t &ret) {
+        return getAxisValue(LIS_OUT_X_L + (2 * static_cast<uint8_t>(axis)), LIS_OUT_X_H + (2 * static_cast<uint8_t>(axis)), ret);
     }
 
     /**

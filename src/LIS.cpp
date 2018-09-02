@@ -150,17 +150,17 @@ uint8_t LIS::getAxisValuesG(float &x, float &y, float &z)
 {
     int16_t x_ = 0, y_ = 0, z_ = 0;
 
-    uint8_t err = getXValue(x_);
+    uint8_t err = getAxisValue(Axis::X, x_);
     if (err != E_OK) {
         return err;
     }
 
-    err = getYValue(y_);
+    err = getAxisValue(Axis::Y, y_);
     if (err != E_OK) {
         return err;
     }
 
-    err = getZValue(z_);
+    err = getAxisValue(Axis::Z, z_);
     if (err != E_OK) {
         return err;
     }
