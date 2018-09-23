@@ -53,6 +53,9 @@ void print_err(byte err_code)
     case E_WRONG_SCALE:
         Serial.println(F("E_WRONG_SCALE"));
         break;
+    case E_CONV_ERROR:
+        Serial.println(F("E_CONV_ERROR"));
+        break;
     default:
         Serial.print(F("Unknown error message: 0x"));
         Serial.println(err_code, HEX);
@@ -81,27 +84,27 @@ void setup()
     print_err(err);
     err = accelerometer.setBDUEnabled(true);
     print_err(err);
-    err = accelerometer.setScale(LIS331::Scale::scale24g);
+    err = accelerometer.setScale(LIS::Scale::scale24g);
     print_err(err);
-    err = accelerometer.setXEnabled(true);
+    err = accelerometer.setAxisEnabled(LIS::Axis::X, true);
     print_err(err);
-    err = accelerometer.setYEnabled(true);
+    err = accelerometer.setAxisEnabled(LIS::Axis::Y, true);
     print_err(err);
-    err = accelerometer.setZEnabled(true);
+    err = accelerometer.setAxisEnabled(LIS::Axis::Z, true);
     print_err(err);
 }
 
 void loop()
 {
     int16_t x = 0, y = 0, z = 0; // Raw values. To get them in [g] use `getAxisValuesG()`
-    accelerometer.getXValue(x);
-    accelerometer.getYValue(y);
-    accelerometer.getZValue(z);
+    accelerometer.getAxisValue(LIS::Axis::X, x);
+    accelerometer.getAxisValue(LIS::Axis::Y, y);
+    accelerometer.getAxisValue(LIS::Axis::Z, z);
 
     bool xOverran = false, yEnabled = false, zAvailable = false;
-    accelerometer.isXDataOverrun(xOverran);
-    accelerometer.isYEnabled(yEnabled);
-    accelerometer.isZDataAvailable(zAvailable);
+    accelerometer.isAxisDataOverrun(LIS::Axis::X, xOverran);
+    accelerometer.isAxisEnabled(LIS::Axis::Y, yEnabled);
+    accelerometer.isAxisDataAvailable(LIS::Axis::Z, zAvailable);
 
     Serial.print(F("X: "));
     Serial.print(x);
