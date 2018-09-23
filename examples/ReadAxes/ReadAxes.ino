@@ -75,8 +75,8 @@ void setup()
     uint8_t err = accelerometer.setRebootMemoryContent(true); // Reset sensor register values to default
     print_err(err);
     bool rebootInProgress = true;
-    while (rebootInProgress) {
-        accelerometer.getRebootMemoryContent(rebootInProgress);
+    while (rebootInProgress && err == E_OK) {
+        err = accelerometer.getRebootMemoryContent(rebootInProgress);
     }
     err = accelerometer.setPowerMode(LIS331::PowerMode::normalMode);
     print_err(err);
