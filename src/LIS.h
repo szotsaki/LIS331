@@ -306,34 +306,17 @@ public:
         return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_ZYXOR, ret);
     }
 
-    inline uint8_t isXDataOverrun(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_XOR, ret);
-    }
-
-    inline uint8_t isYDataOverrun(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_YOR, ret);
-    }
-
-    inline uint8_t isZDataOverrun(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_ZOR, ret);
+    inline uint8_t isAxisDataOverrun(const Axis axis, bool &ret) {
+        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_XOR + static_cast<uint8_t>(axis), ret);
     }
 
     inline uint8_t isAllDataAvailable(bool &ret) {
         return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_ZYXDA, ret);
     }
 
-    inline uint8_t isXDataAvailable(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_XDA, ret);
+    inline uint8_t isAxisDataAvailable(const Axis axis, bool &ret) {
+        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_XDA + static_cast<uint8_t>(axis), ret);
     }
-
-    inline uint8_t isYDataAvailable(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_YDA, ret);
-    }
-
-    inline uint8_t isZDataAvailable(bool &ret) {
-        return readRegisterBit(LIS_STATUS_REG, LIS_STATUS_REG_ZDA, ret);
-    }
-
 
     // Interrupt config register
     uint8_t getInterruptSource(const byte interrupt, IntSource &ret);
