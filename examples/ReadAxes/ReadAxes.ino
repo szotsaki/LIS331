@@ -1,9 +1,9 @@
 #include <I2C.h>
-#include <LIS331.h>
+#include <LIS331HH.h>
 
 #define ACCELEROMETER_ADDR 0x18 // Alternative: 0x19
 
-LIS331 accelerometer{ACCELEROMETER_ADDR};
+static LIS331 accelerometer{ACCELEROMETER_ADDR};
 
 void print_err(byte err_code)
 {

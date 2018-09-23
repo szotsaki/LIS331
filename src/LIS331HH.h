@@ -14,8 +14,8 @@
  *
 */
 
-#ifndef LIS331_H
-#define LIS331_H
+#ifndef LIS331HH_H
+#define LIS331HH_H
 
 #include <limits.h>
 
@@ -221,4 +221,4 @@ public:
     uint8_t setSleepToWakeEnabled(const bool enabled);
 };
 
-#endif // LIS331_H
+#endif // LIS331HH_H

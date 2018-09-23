@@ -14,7 +14,7 @@
  *
 */
 
-#include "LIS331.h"
+#include "LIS331HH.h"
 
 LIS331::LIS331(const uint8_t i2cAddress)
     : LIS(i2cAddress, SensorType::LIS331HH, Scale::scale6g)
