@@ -1,11 +1,10 @@
 LIS331HH and LIS3DH triple-axis accelerometer library for Arduino
 =================================================================
 
-Implements all features of the STMicroelectronics [LIS331HH](http://www.st.com/content/st_com/en/products/mems-and-sensors/accelerometers/lis331hh.html) accelerometer according to its data sheet. Should be compatible with [LIS331DLH](http://www.st.com/content/st_com/en/products/mems-and-sensors/accelerometers/lis331dlh.html) and [H3LIS331DL](http://www.st.com/en/mems-and-sensors/h3lis331dl.html) apart from the selectable scale:
+Implements all features of STMicroelectronics [LIS331HH](https://www.st.com/content/st_com/en/products/mems-and-sensors/accelerometers/lis331hh.html) accelerometer and most of the features of [LIS3DH](https://www.st.com/content/st_com/en/products/mems-and-sensors/accelerometers/lis3dh.html) according to their data sheet. Scales:
 
 * LIS331HH: ±6g/±12g/±24g
-* LIS331DLH: ±2g/±4g/±8g
-* H3LIS331DL: ±100g/±200g/±400g
+* LIS3DH: ±2g/±4g/±8g/±16g
 
 ## Wiring
 
@@ -24,9 +23,9 @@ The code uses the I²C protocol to communicate with the sensor. If you attach th
 
 ## Dependencies
 
-Install [I2C Master Library](http://dsscircuits.com/index.php/articles/66-arduino-i2c-master-library). It's more robust and customisable than the built-in Wire.h library.
+Install [I2C Master Library](http://dsscircuits.com/index.php/articles/66-arduino-i2c-master-library). It's faster, more robust, and customisable than the built-in Wire.h library.
 
 ## Pull requests
 
-Any code loves refactoring and feature expansion. Please, do create pull requests if you added something to this library.
+Any code loves refactoring and feature expansion. Please, do create pull requests!
 
