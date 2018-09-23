@@ -116,6 +116,28 @@ uint8_t LIS331::setHighPassFilterMode(const HighPassFilter mode)
     return writeReg(LIS_CTRL_REG2, ctrlReg2);
 }
 
+uint8_t LIS331::isHighPassFilterEnabled(const byte interrupt, bool &ret)
+{
+    if (interrupt == 1) {
+        return readRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_HPEN1, ret);
+    } else if (interrupt == 2) {
+        return readRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_HPEN2, ret);
+    }
+
+    return E_WRONG_INTERRUPT;
+}
+
+uint8_t LIS331::setHighPassFilterEnabled(const byte interrupt, const bool enabled)
+{
+    if (interrupt == 1) {
+        return writeRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_HPEN1, enabled);
+    } else if (interrupt == 2) {
+        return writeRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_HPEN2, enabled);
+    }
+
+    return E_WRONG_INTERRUPT;
+}
+
 uint8_t LIS331::isInterruptLatched(const byte interrupt, bool &ret)
 {
     if (interrupt == 1) {

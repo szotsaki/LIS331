@@ -141,38 +141,17 @@ public:
     }
 
     /**
-     * @brief isHPenabledForInterrupt1 High pass filter enabled for interrupt 1 source
+     * @brief isHighPassFilterEnabled High pass filter enabled for an interrupt source
      * @return
      */
-    inline uint8_t isHPenabledForInterrupt1(bool &ret) {
-        return readRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_HPEN1, ret);
-    }
+    uint8_t isHighPassFilterEnabled(const byte interrupt, bool &ret);
 
     /**
-     * @brief setHPenabledForInterrupt1 High pass filter enabled for interrupt 1 source
+     * @brief setHighPassFilterEnabled Set high pass filter enabled/disabled for an interrupt source
      * @param enabled
      * @return
      */
-    inline uint8_t setHPenabledForInterrupt1(const bool enabled) {
-        return writeRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_HPEN1, enabled);
-    }
-
-    /**
-     * @brief isHPenabledForInterrupt2 High pass filter enabled for interrupt 2 source
-     * @return
-     */
-    inline uint8_t isHPenabledForInterrupt2(bool &ret) {
-        return readRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_HPEN2, ret);
-    }
-
-    /**
-     * @brief setHPenabledForInterrupt2 High pass filter enabled for interrupt 2 source
-     * @param enabled
-     * @return
-     */
-    inline uint8_t setHPenabledForInterrupt2(const bool enabled) {
-        return writeRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_HPEN2, enabled);
-    }
+    uint8_t setHighPassFilterEnabled(const byte interrupt, const bool enabled);
 
     inline uint8_t resetHighPassFilter() override final {
         byte tmp = 0;
