@@ -167,7 +167,7 @@ uint8_t LIS3DH::setInterruptLatched(const byte interrupt, const bool latched)
     if (interrupt == 1) {
         return writeRegisterBit(LIS_CTRL_REG5, LIS_CTRL_REG5_LIR_INT1, latched);
     } else if (interrupt == 2) {
-        return writeRegisterBit(LIS_CTRL_REG3, LIS_CTRL_REG5_LIR_INT1, latched);
+        return writeRegisterBit(LIS_CTRL_REG5, LIS_CTRL_REG5_LIR_INT2, latched);
     }
 
     return E_WRONG_INTERRUPT;
