@@ -151,6 +151,43 @@ uint8_t LIS3DH::setHPAOIenabledForInterrupt(const byte interrupt, const bool ena
     return E_WRONG_INTERRUPT;
 }
 
+uint8_t LIS3DH::setInterruptEnabled(const Interrupt2Enable &interrupt2Enable)
+{
+    uint8_t result = (*(reinterpret_cast<const uint8_t*>(&interrupt2Enable))) << 3;
+
+    bool polarity;
+    uint8_t err = readRegisterBit(LIS_CTRL_REG6, LIS_CTRL_REG6_INT_POLARITY, polarity);
+    if (err != E_OK) {
+        return err;
+    }
+
+    bitWrite(result, LIS_CTRL_REG6_INT_POLARITY, polarity);
+
+    return writeReg(LIS_CTRL_REG6, result);
+}
+
+uint8_t LIS3DH::isInterruptEnabled(Interrupt1Enable &ret)
+{
+    uint8_t temp;
+    const uint8_t err = readReg(LIS_CTRL_REG3, temp);
+    temp >>= 1;
+
+    ret = *(reinterpret_cast<Interrupt1Enable *>(&temp));
+
+    return err;
+}
+
+uint8_t LIS3DH::isInterruptEnabled(Interrupt2Enable &ret)
+{
+    uint8_t temp;
+    const uint8_t err = readReg(LIS_CTRL_REG6, temp);
+    temp >>= 3;
+
+    ret = *(reinterpret_cast<Interrupt2Enable *>(&temp));
+
+    return err;
+}
+
 uint8_t LIS3DH::isInterruptLatched(const byte interrupt, bool &ret)
 {
     if (interrupt == 1) {

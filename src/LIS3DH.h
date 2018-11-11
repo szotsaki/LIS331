@@ -142,7 +142,7 @@ public:
         all200Hz                 = B01100000,
         all400Hz                 = B01110000,
         lowPower1600Hz           = B10000000,
-        normal1344LowPower5376Hz = B10010000 // High precision, normal: 1344 Hz; low power: 5376 Hz
+        normal1344LowPower5376Hz = B10010000 // High precision and normal: 1344 Hz; low power: 5376 Hz
     };
 
     enum class HighPassFilter : byte
@@ -151,6 +151,24 @@ public:
         referenceSignal  = B01000000, // Reference signal for filtering
         normal           = B10000000, // Normal mode
         autoresetOnIrq   = B11000000  // Autoreset on interrupt event
+    };
+
+    struct __attribute__((packed, aligned(8))) Interrupt1Enable {
+        uint8_t fifoOverrun   :1;
+        uint8_t fifoWatermark :1;
+        uint8_t _321da        :1;
+        uint8_t zyxda         :1;
+        uint8_t aoiOnInt2     :1; // And/Or combination of interrupts on Interrupt source 2
+        uint8_t aoi           :1; // And/Or combination of interrupts on Interrupt source 1
+        uint8_t click         :1;
+    };
+
+    struct __attribute__((packed, aligned(8))) Interrupt2Enable {
+        uint8_t activity     :1;
+        uint8_t bootFinished :1;
+        uint8_t aoi          :1; // And/Or combination of interrupts on Interrupt source 2
+        uint8_t aoiOnInt1    :1; // And/Or combination of interrupts on Interrupt source 1
+        uint8_t click        :1;
     };
 
     explicit LIS3DH(const uint8_t i2cAddress = 0x18);
@@ -201,6 +219,17 @@ public:
         // Reading at this address zeroes instantaneously the content of the internal high pass-filter
         return readReg(LIS_REFERENCE, tmp);
     }
+
+    using LIS::setInterruptEnabled;
+    inline uint8_t setInterruptEnabled(const Interrupt1Enable &interrupt1Enable) {
+        return writeReg(LIS_CTRL_REG3, (*(reinterpret_cast<const uint8_t*>(&interrupt1Enable))) << 1);
+    }
+
+    uint8_t setInterruptEnabled(const Interrupt2Enable& interrupt2Enable);
+
+    using LIS::isInterruptEnabled;
+    uint8_t isInterruptEnabled(Interrupt1Enable& ret);
+    uint8_t isInterruptEnabled(Interrupt2Enable& ret);
 
     inline uint8_t getInterruptPolarity(bool &ret_low) override final {
         return readRegisterBit(LIS_CTRL_REG6, LIS_CTRL_REG6_INT_POLARITY, ret_low);
