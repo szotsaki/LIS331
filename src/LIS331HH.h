@@ -95,20 +95,12 @@ public:
         hpfConfigCutOff = B01000000
     };
 
-    enum class Int1DataSignal : byte
+    enum class InterruptDataSignal : byte
     {
-        ds1Interrupt1Source = B00000000,
-        ds1Interrupt1Or2Src = B00000001,
-        ds1DataReady        = B00000010,
-        ds1BootRunning      = B00000011
-    };
-
-    enum class Int2DataSignal : byte
-    {
-        ds2Interrupt2Source = B00000000,
-        ds2Interrupt1Or2Src = B00001000,
-        ds2DataReady        = B00010000,
-        ds2BootRunning      = B00011000
+        currentInterruptSrc = B00000000,
+        interrupt1Or2Src    = B00000001,
+        dataReady           = B00000010,
+        bootRunning         = B00000011
     };
 
     explicit LIS331(const uint8_t i2cAddress = 0x18);
@@ -190,11 +182,8 @@ public:
     uint8_t isInterruptLatched(const byte interrupt, bool &ret) override final;
     uint8_t setInterruptLatched(const byte interrupt, const bool latched) override final;
 
-    uint8_t getInt1DataSignal(Int1DataSignal &ret);
-    uint8_t getInt2DataSignal(Int2DataSignal &ret);
-
-    uint8_t setDataSignal(const Int1DataSignal signal);
-    uint8_t setDataSignal(const Int2DataSignal signal);
+    uint8_t getInterruptDataSignal(const byte interrupt, InterruptDataSignal &ret);
+    uint8_t setInterruptDataSignal(const byte interrupt, const InterruptDataSignal signal);
 
     // Control register 4
     inline uint8_t getSelfTestSign(bool &ret) override final {

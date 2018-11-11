@@ -47,8 +47,7 @@ SensorType	LITERAL1
 LIS331	KEYWORD1
 getDataRate	KEYWORD2
 getHighPassFilterMode	KEYWORD2
-getInt1DataSignal	KEYWORD2
-getInt2DataSignal	KEYWORD2
+getInterruptDataSignal	KEYWORD2
 getInterruptPolarity	KEYWORD2
 getPPOD	KEYWORD2
 getPowerMode	KEYWORD2
@@ -61,7 +60,7 @@ isSelfTestEnabled	KEYWORD2
 isSleepToWakeEnabled	KEYWORD2
 resetHighPassFilter	KEYWORD2
 setDataRate	KEYWORD2
-setDataSignal	KEYWORD2
+setInterruptDataSignal	KEYWORD2
 setFilteredDataSection	KEYWORD2
 setHighPassFilterEnabled	KEYWORD2
 setHighPassFilterMode	KEYWORD2
@@ -75,8 +74,7 @@ setSleepToWakeEnabled	KEYWORD2
 PowerMode	LITERAL1
 DataRate	LITERAL1
 HighPassFilter	LITERAL1
-Int1DataSignal	LITERAL1
-Int2DataSignal	LITERAL1
+InterruptDataSignal	LITERAL1
 LIS3DH	KEYWORD1
 getDataRate	KEYWORD2
 getHighPassFilterMode	KEYWORD2

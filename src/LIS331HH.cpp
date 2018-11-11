@@ -160,8 +160,12 @@ uint8_t LIS331::setInterruptLatched(const byte interrupt, const bool latched)
     return E_WRONG_INTERRUPT;
 }
 
-uint8_t LIS331::getInt1DataSignal(Int1DataSignal &ret)
+uint8_t LIS331::getInterruptDataSignal(const byte interrupt, InterruptDataSignal &ret)
 {
+    if (interrupt != 1 && interrupt != 2) {
+        return E_WRONG_INTERRUPT;
+    }
+
     byte ctrlReg3 = 0;
     const uint8_t err = readReg(LIS_CTRL_REG3, ctrlReg3);
     if (err != E_OK) {
@@ -169,53 +173,38 @@ uint8_t LIS331::getInt1DataSignal(Int1DataSignal &ret)
     }
 
     byte signal = 0;
-    bitWrite(signal, LIS_CTRL_REG3_I1_CFG0, bitRead(ctrlReg3, LIS_CTRL_REG3_I1_CFG0));
-    bitWrite(signal, LIS_CTRL_REG3_I1_CFG1, bitRead(ctrlReg3, LIS_CTRL_REG3_I1_CFG1));
 
-    ret = Int1DataSignal(signal);
+    if (interrupt == 1) {
+        bitWrite(signal, LIS_CTRL_REG3_I1_CFG0, bitRead(ctrlReg3, LIS_CTRL_REG3_I1_CFG0));
+        bitWrite(signal, LIS_CTRL_REG3_I1_CFG1, bitRead(ctrlReg3, LIS_CTRL_REG3_I1_CFG1));
+    } else {
+        bitWrite(signal, LIS_CTRL_REG3_I1_CFG0, bitRead(ctrlReg3, LIS_CTRL_REG3_I2_CFG0));
+        bitWrite(signal, LIS_CTRL_REG3_I1_CFG1, bitRead(ctrlReg3, LIS_CTRL_REG3_I2_CFG1));
+    }
+
+    ret = InterruptDataSignal(signal);
     return E_OK;
 }
 
-uint8_t LIS331::getInt2DataSignal(Int2DataSignal &ret)
+uint8_t LIS331::setInterruptDataSignal(const byte interrupt, const InterruptDataSignal signal)
 {
+    if (interrupt != 1 && interrupt != 2) {
+        return E_WRONG_INTERRUPT;
+    }
+
     byte ctrlReg3 = 0;
     const uint8_t err = readReg(LIS_CTRL_REG3, ctrlReg3);
     if (err != E_OK) {
         return err;
     }
 
-    byte signal = 0;
-    bitWrite(signal, LIS_CTRL_REG3_I2_CFG0, bitRead(ctrlReg3, LIS_CTRL_REG3_I2_CFG0));
-    bitWrite(signal, LIS_CTRL_REG3_I2_CFG1, bitRead(ctrlReg3, LIS_CTRL_REG3_I2_CFG1));
-
-    ret = Int2DataSignal(signal);
-    return E_OK;
-}
-
-uint8_t LIS331::setDataSignal(const Int1DataSignal signal)
-{
-    byte ctrlReg3 = 0;
-    const uint8_t err = readReg(LIS_CTRL_REG3, ctrlReg3);
-    if (err != E_OK) {
-        return err;
+    if (interrupt == 1) {
+        bitWrite(ctrlReg3, LIS_CTRL_REG3_I1_CFG0, bitRead(static_cast<uint8_t>(signal), LIS_CTRL_REG3_I1_CFG0));
+        bitWrite(ctrlReg3, LIS_CTRL_REG3_I1_CFG1, bitRead(static_cast<uint8_t>(signal), LIS_CTRL_REG3_I1_CFG1));
+    } else {
+        bitWrite(ctrlReg3, LIS_CTRL_REG3_I2_CFG0, bitRead(static_cast<uint8_t>(signal), LIS_CTRL_REG3_I1_CFG0));
+        bitWrite(ctrlReg3, LIS_CTRL_REG3_I2_CFG1, bitRead(static_cast<uint8_t>(signal), LIS_CTRL_REG3_I1_CFG1));
     }
-
-    bitWrite(ctrlReg3, LIS_CTRL_REG3_I1_CFG0, bitRead(static_cast<uint8_t>(signal), LIS_CTRL_REG3_I1_CFG0));
-    bitWrite(ctrlReg3, LIS_CTRL_REG3_I1_CFG1, bitRead(static_cast<uint8_t>(signal), LIS_CTRL_REG3_I1_CFG1));
-
-    return writeReg(LIS_CTRL_REG3, ctrlReg3);
-}
-
-uint8_t LIS331::setDataSignal(const Int2DataSignal signal)
-{
-    byte ctrlReg3 = 0;
-    const uint8_t err = readReg(LIS_CTRL_REG3, ctrlReg3);
-    if (err != E_OK) {
-        return err;
-    }
-
-    bitWrite(ctrlReg3, LIS_CTRL_REG3_I2_CFG0, bitRead(static_cast<uint8_t>(signal), LIS_CTRL_REG3_I2_CFG0));
-    bitWrite(ctrlReg3, LIS_CTRL_REG3_I2_CFG1, bitRead(static_cast<uint8_t>(signal), LIS_CTRL_REG3_I2_CFG1));
 
     return writeReg(LIS_CTRL_REG3, ctrlReg3);
 }
