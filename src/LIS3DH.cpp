@@ -172,7 +172,7 @@ uint8_t LIS3DH::isInterruptEnabled(Interrupt1Enable &ret)
     const uint8_t err = readReg(LIS_CTRL_REG3, temp);
     temp >>= 1;
 
-    ret = *(reinterpret_cast<Interrupt1Enable *>(&temp));
+    memcpy(&ret, &temp, sizeof(temp));
 
     return err;
 }
@@ -183,7 +183,7 @@ uint8_t LIS3DH::isInterruptEnabled(Interrupt2Enable &ret)
     const uint8_t err = readReg(LIS_CTRL_REG6, temp);
     temp >>= 3;
 
-    ret = *(reinterpret_cast<Interrupt2Enable *>(&temp));
+    memcpy(&ret, &temp, sizeof(temp));
 
     return err;
 }
