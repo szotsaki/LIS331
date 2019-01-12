@@ -230,3 +230,71 @@ uint8_t LIS3DH::setSelfTestEnabled(const bool enabled, const bool sign)
 
     return r1 != E_OK ? r1 : r2;
 }
+
+uint8_t LIS3DH::getFifoMode(FifoMode &ret)
+{
+    uint8_t fifoCtrlReg;
+    const uint8_t err = readReg(LIS_FIFO_CTRL_REG, fifoCtrlReg);
+    if (err != E_OK) {
+        return err;
+    }
+
+    fifoCtrlReg &= B11000000;
+    ret = static_cast<FifoMode>(fifoCtrlReg);
+
+    return E_OK;
+}
+
+uint8_t LIS3DH::setFifoMode(const FifoMode fifoMode)
+{
+    uint8_t fifoCtrlReg;
+    const uint8_t err = readReg(LIS_FIFO_CTRL_REG, fifoCtrlReg);
+    if (err != E_OK) {
+        return err;
+    }
+
+    bitWrite(fifoCtrlReg, LIS_FIFO_CTRL_REG_FM1, bitRead(static_cast<uint8_t>(fifoMode), LIS_FIFO_CTRL_REG_FM1));
+    bitWrite(fifoCtrlReg, LIS_FIFO_CTRL_REG_FM0, bitRead(static_cast<uint8_t>(fifoMode), LIS_FIFO_CTRL_REG_FM0));
+
+    return writeReg(LIS_FIFO_CTRL_REG, fifoCtrlReg);
+}
+
+uint8_t LIS3DH::getFifoUnreadSamples(uint8_t &ret)
+{
+    uint8_t fifoSrcReg;
+    const uint8_t err = readReg(LIS_FIFO_SRC_REG, fifoSrcReg);
+    if (err != E_OK) {
+        return err;
+    }
+
+    ret = fifoSrcReg & B00011111;
+
+    return E_OK;
+}
+
+uint8_t LIS3DH::readFromFifo(int16_t ret[][3], const uint8_t maxTripletsToRead, uint8_t& tripletsRead)
+{
+    uint8_t err = getFifoUnreadSamples(tripletsRead);
+    if (err != E_OK) {
+        return err;
+    }
+    tripletsRead = min(tripletsRead, maxTripletsToRead);
+
+    if (tripletsRead == 0) {
+        return E_OK;
+    }
+
+    err = I2c.read(i2cAddress, 0x80 | LIS_OUT_X_L, tripletsRead * 3 * 2, reinterpret_cast<uint8_t*>(ret));
+    if (err != E_OK) {
+        return err;
+    }
+
+    const uint8_t precisionDivider = static_cast<uint8_t>(1 << (16 - precision));
+    for (uint8_t i = 0; i < tripletsRead; ++i) {
+        for (uint8_t j = 0; j < 3; ++j) {
+            ret[i][j] /= precisionDivider;
+        }
+    }
+
+    return E_OK;
+}

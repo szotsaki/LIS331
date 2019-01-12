@@ -171,6 +171,13 @@ public:
         uint8_t click        :1;
     };
 
+    enum class FifoMode : byte {
+        bypass       = B00000000,
+        fifo         = B01000000,
+        stream       = B10000000,
+        streamToFifo = B11000000
+    };
+
     explicit LIS3DH(const uint8_t i2cAddress = 0x18);
 
     uint8_t getPowerMode(PowerMode &ret);
@@ -247,8 +254,54 @@ public:
     }
 
     uint8_t isSelfTestEnabled(bool &ret) override final;
-
     uint8_t setSelfTestEnabled(const bool enabled, const bool sign) override final;
+
+    inline uint8_t isFifoEnabled(bool &ret) {
+        return readRegisterBit(LIS_CTRL_REG5, LIS_CTRL_REG5_FIFO_EN, ret);
+    }
+
+    inline uint8_t setFifoEnabled(const bool enabled) {
+        return writeRegisterBit(LIS_CTRL_REG5, LIS_CTRL_REG5_FIFO_EN, enabled);
+    }
+
+    uint8_t getFifoMode(FifoMode &ret);
+    uint8_t setFifoMode(const FifoMode fifoMode);
+
+    /**
+     * @brief isFifoWatermarkExceeded
+     * @param ret Bit is set high when FIFO content exceeds watermark level
+     * @return
+     */
+    inline uint8_t isFifoWatermarkExceeded(bool &ret) {
+        return readRegisterBit(LIS_FIFO_SRC_REG, LIS_FIFO_SRC_REG_WTM, ret);
+    }
+
+    /**
+     * Bit is set high when FIFO buffer is full; this means that the FIFO buffer
+     * contains 32 unread samples. At the following ODR a new sample set replaces the
+     * oldest FIFO value. The bit is set to 0 when the first sample set has been
+     * read.
+     *
+     * @brief isFifoFull
+     * @param ret
+     * @return
+     */
+    inline uint8_t isFifoFull(bool &ret) {
+        return readRegisterBit(LIS_FIFO_SRC_REG, LIS_FIFO_SRC_REG_OVRN_FIFO, ret);
+    }
+
+    /**
+     * @brief isFifoEmpty Bit is set high when all FIFO samples have been read and FIFO is empty
+     * @param ret
+     * @return
+     */
+    inline uint8_t isFifoEmpty(bool &ret) {
+        return readRegisterBit(LIS_FIFO_SRC_REG, LIS_FIFO_SRC_REG_EMPTY, ret);
+    }
+
+    uint8_t getFifoUnreadSamples(uint8_t &ret);
+
+    uint8_t readFromFifo(int16_t ret[][3], const uint8_t maxTripletsToRead, uint8_t &tripletsRead);
 };
 
 #endif // LIS3DH_H
