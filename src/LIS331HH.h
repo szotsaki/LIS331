@@ -124,11 +124,11 @@ public:
     uint8_t getHighPassFilterMode(HighPassFilter &ret);
     uint8_t setHighPassFilterMode(const HighPassFilter mode);
 
-    inline uint8_t isFilteredDataSection(bool &ret) override final {
+    inline uint8_t isFilteredDataSelection(bool &ret) override final {
         return readRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_FDS, ret);
     }
 
-    inline uint8_t setFilteredDataSection(const bool enabled) override final {
+    inline uint8_t setFilteredDataSelection(const bool enabled) override final {
         return writeRegisterBit(LIS_CTRL_REG2, LIS_CTRL_REG2_FDS, enabled);
     }
 

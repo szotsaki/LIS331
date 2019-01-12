@@ -239,19 +239,19 @@ public:
     uint8_t setHighPassCutOff(const HighPassCutOff mode);
 
     /**
-     * @brief isFilteredDataSection
+     * @brief isFilteredDataSelection
      * @return false: internal filter bypassed
      *         true:  data from internal filter sent to output register (and FIFO if applicable)
      */
-    virtual uint8_t isFilteredDataSection(bool &ret) = 0;
+    virtual uint8_t isFilteredDataSelection(bool &ret) = 0;
 
     /**
-     * @brief setFilteredDataSection
+     * @brief setFilteredDataSelection
      * @param enabled false: internal filter bypassed;
      *                true:  data from internal filter sent to output register (and FIFO if applicable)
      * @return
      */
-    virtual uint8_t setFilteredDataSection(const bool enabled) = 0;
+    virtual uint8_t setFilteredDataSelection(const bool enabled) = 0;
 
     /**
      * @brief isBDUEnabled: Block data update. Default value: 0
