@@ -201,6 +201,10 @@ public:
         return getAxisValue(LIS_OUT_X_L + (2 * static_cast<uint8_t>(axis)), LIS_OUT_X_H + (2 * static_cast<uint8_t>(axis)), ret);
     }
 
+    inline float convertRawToG(const int16_t &axis) {
+        return axis * (static_cast<uint8_t>(currentScale) * 2) / static_cast<float>(1 << precision);
+    }
+
     /**
      * @brief getAxisValuesG
      * @param x
